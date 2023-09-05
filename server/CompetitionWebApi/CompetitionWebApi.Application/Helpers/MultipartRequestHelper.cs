@@ -1,4 +1,5 @@
-﻿using Microsoft.Net.Http.Headers;
+﻿using CompetitionWebApi.Application.Exceptions;
+using Microsoft.Net.Http.Headers;
 
 namespace CompetitionWebApi.Application.Helpers;
 
@@ -10,13 +11,12 @@ public static class MultipartRequestHelper
 
         if (string.IsNullOrWhiteSpace(boundary))
         {
-            throw new InvalidDataException("Missing content-type boundary.");
+            throw new InvalidRequestException("Missing content-type boundary.");
         }
 
         if (boundary.Length > lengthLimit)
         {
-            throw new InvalidDataException(
-                $"Multipart boundary length limit {lengthLimit} exceeded.");
+            throw new InvalidRequestException($"Multipart boundary length limit {lengthLimit} exceeded.");
         }
 
         return boundary;

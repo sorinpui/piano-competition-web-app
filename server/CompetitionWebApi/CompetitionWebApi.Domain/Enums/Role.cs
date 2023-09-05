@@ -2,7 +2,7 @@
 
 public enum Role
 {
-    Spectator,
+    Spectator = 1,
     Contestant,
     Judge
 }

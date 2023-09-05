@@ -2,7 +2,7 @@
 
 public enum Period
 {
-    Baroque,
+    Baroque = 1,
     Classical,
     Romantic
 }

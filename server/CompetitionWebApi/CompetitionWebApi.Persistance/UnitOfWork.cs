@@ -1,14 +1,14 @@
-﻿using CompetitionWebApi.Domain.Interfaces;
-using CompetitionWebApi.Persistance;
-using CompetitionWebApi.Persistance.Repositories;
-
+﻿using CompetitionWebApi.DataAccess.Repositories;
+using CompetitionWebApi.Domain.Interfaces;
 
 namespace CompetitionWebApi.DataAccess;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly CompetitionDbContext _context;
+
     public IUserRepository UserRepository { get; }
+    public IPerformanceRepository PerformanceRepository { get; }
 
     private bool isDisposed;
 
@@ -16,6 +16,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     {
         _context = context;
         UserRepository = new UserRepository(_context);
+        PerformanceRepository = new PerformanceRepository(_context);
     }
 
     public async Task SaveAsync()

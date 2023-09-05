@@ -1,6 +1,9 @@
-﻿namespace CompetitionWebApi.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace CompetitionWebApi.Application.Interfaces;
 
 public interface IValidationService
 {
     Task ValidateRequest<T>(T request);
+    string ValidateMultipartRequest(HttpRequest request);
 }

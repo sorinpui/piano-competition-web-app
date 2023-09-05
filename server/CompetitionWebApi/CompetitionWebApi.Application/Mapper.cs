@@ -16,4 +16,20 @@ public static class Mapper
             RoleId = request.RoleId
         };
     }
+
+    internal static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request, string videoFilePath)
+    {
+        return new Performance
+        {
+            Piece = new Piece
+            {
+                Name = request.PieceName,
+                Composer = request.Composer,
+                Period = request.Period
+            },
+
+            VideoUri = videoFilePath,
+            UserId = request.UserId
+        };
+    }
 }

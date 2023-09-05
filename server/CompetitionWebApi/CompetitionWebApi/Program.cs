@@ -4,8 +4,6 @@ using CompetitionWebApi.DataAccess;
 using CompetitionWebApi.Domain.Interfaces;
 using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
-using CompetitionWebApi.Persistance;
-using CompetitionWebApi.Persistance.Repositories;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Cryptography;
 using CompetitionWebApi.Application.Factories;
+using CompetitionWebApi.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,17 +27,21 @@ builder.Services.AddSwaggerGen();
 string? connectionString = builder.Configuration.GetConnectionString("CompetitionDb");
 builder.Services.AddDbContext<CompetitionDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPerformanceRepository, PerformanceRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Request validators
 builder.Services.AddTransient<IValidator<RegisterRequest>, ReigsterRequestValidator>();
 builder.Services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
+builder.Services.AddTransient<IValidator<PerformanceRequest>, PerformanceRequestValidator>();
 
 builder.Services.AddSingleton<IValidatorsFactory, ValidatorsFactory>();
 
 // Application services
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
 builder.Services.AddScoped<IValidationService, ValidationService>();
+builder.Services.AddScoped<IFileService, FileService>();
 
 // Authentication services
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -76,6 +79,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseExceptionHandler("/error");
 

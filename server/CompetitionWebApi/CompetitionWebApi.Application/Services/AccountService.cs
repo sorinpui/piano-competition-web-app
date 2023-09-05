@@ -20,7 +20,7 @@ public class AccountService : IAccountService
 
     public async Task RegisterUser(RegisterRequest request)
     {
-        User user = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
+        User user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (user != null)
         {
@@ -37,11 +37,11 @@ public class AccountService : IAccountService
 
     public async Task<string> LoginUser(LoginRequest request)
     {
-        User userFromDb = await _unitOfWork.UserRepository.GetUserByEmail(request.Email);
+        User userFromDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (userFromDb == null)
         {
-            throw new UserNotFoundException(request.Email);
+            throw new UserNotFoundException($"There's no account registered with {request.Email}");
         }
 
         bool isMatch = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, userFromDb.Password);

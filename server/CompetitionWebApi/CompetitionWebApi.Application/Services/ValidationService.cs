@@ -1,5 +1,9 @@
-﻿using CompetitionWebApi.Application.Interfaces;
+﻿using CompetitionWebApi.Application.Exceptions;
+using CompetitionWebApi.Application.Helpers;
+using CompetitionWebApi.Application.Interfaces;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 
 namespace CompetitionWebApi.Application.Services;
 
@@ -15,5 +19,21 @@ public class ValidationService : IValidationService
     public async Task ValidateRequest<T>(T request)
     {
         await _validatorsFactory.GetValidator<T>().ValidateAndThrowAsync(request);
+    }
+
+    public string ValidateMultipartRequest(HttpRequest request)
+    {
+        string? contentType = request.ContentType;
+
+        if (!MultipartRequestHelper.IsMultipartContentType(contentType))
+        {
+            throw new InvalidRequestException("Wrong media type.");
+        }
+
+        int maxBoundaryLength = 70;
+
+        string boundary = MultipartRequestHelper.GetBoundary(MediaTypeHeaderValue.Parse(contentType), maxBoundaryLength);
+
+        return boundary;
     }
 }

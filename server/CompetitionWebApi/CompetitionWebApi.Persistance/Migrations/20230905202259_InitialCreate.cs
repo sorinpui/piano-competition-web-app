@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace CompetitionWebApi.Persistance.Migrations
+namespace CompetitionWebApi.DataAccess.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -54,7 +54,7 @@ namespace CompetitionWebApi.Persistance.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Piece_Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Piece_Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Piece_Composer = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Piece_Period = table.Column<int>(type: "int", nullable: false),
                     VideoUri = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)

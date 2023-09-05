@@ -1,8 +1,7 @@
-﻿using CompetitionWebApi.Domain;
-using CompetitionWebApi.Domain.Entities;
+﻿using CompetitionWebApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CompetitionWebApi.Persistance;
+namespace CompetitionWebApi.DataAccess;
 
 public class CompetitionDbContext : DbContext
 {

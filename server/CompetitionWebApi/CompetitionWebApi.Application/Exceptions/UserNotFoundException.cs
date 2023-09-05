@@ -5,14 +5,12 @@ namespace CompetitionWebApi.Application.Exceptions;
 
 internal class UserNotFoundException : Exception, IServiceException
 {
-    public string Email { get; }
-
     public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
 
-    public string ErrorMessage => $"There's no account registered with {Email}";
+    public string ErrorMessage { get; }
 
-    public UserNotFoundException(string email)
+    public UserNotFoundException(string errorMessage)
     {
-        Email = email;
+        ErrorMessage = errorMessage;
     }
 }

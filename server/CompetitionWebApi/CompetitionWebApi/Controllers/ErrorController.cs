@@ -19,7 +19,8 @@ public class ErrorController : ControllerBase
             { HttpStatusCode.InternalServerError, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1" },
             { HttpStatusCode.BadRequest, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1" },
             { HttpStatusCode.Conflict, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.8" },
-            { HttpStatusCode.Unauthorized, "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1" }
+            { HttpStatusCode.Unauthorized, "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1" },
+            { HttpStatusCode.NotFound, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4" }
         };
     }
 
