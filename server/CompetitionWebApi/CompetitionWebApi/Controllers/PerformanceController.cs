@@ -36,12 +36,21 @@ public class PerformanceController : ControllerBase
     [DisableFormValueModelBinding]
     [RequestSizeLimit(300*1024*10^6)] // 300 MB
     [Authorize(Roles = "Contestant")]
-    public async Task<IActionResult> UploadPerformance([FromQuery] int performanceId)
+    public async Task<IActionResult> UploadPerformanceVideo([FromQuery] int performanceId)
     {
         string boundary = _validationService.ValidateMultipartRequest(Request);
 
-        await _performanceService.SavePerformanceVideo(boundary, Request.Body, performanceId);
+        await _performanceService.SavePerformanceVideoAsync(boundary, Request.Body, performanceId);
 
         return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
+    }
+
+    [HttpGet("videos")]
+    [Authorize]
+    public async Task<IActionResult> DownloadPerformanceVideo([FromQuery] int performanceId)
+    {
+        Stream videoStream = await _performanceService.GetPerformanceVideoAsync(performanceId);
+
+        return File(videoStream, "application/octet-stream", "test.mp4");
     }
 }

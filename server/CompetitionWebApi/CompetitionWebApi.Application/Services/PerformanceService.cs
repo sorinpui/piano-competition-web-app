@@ -36,7 +36,7 @@ public class PerformanceService : IPerformanceService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task SavePerformanceVideo(string boundary, Stream requestBody, int performanceId)
+    public async Task SavePerformanceVideoAsync(string boundary, Stream requestBody, int performanceId)
     {
         Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(performanceId);
 
@@ -72,5 +72,19 @@ public class PerformanceService : IPerformanceService
         performanceFromDb.VideoUri = videoFilePath;
 
         await _unitOfWork.SaveAsync();
+    }
+
+    public async Task<Stream> GetPerformanceVideoAsync(int performanceId)
+    {
+        Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(performanceId);
+
+        if (performanceFromDb == null)
+        {
+            throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
+        }
+
+        var stream = new FileStream(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
+
+        return stream;
     }
 }

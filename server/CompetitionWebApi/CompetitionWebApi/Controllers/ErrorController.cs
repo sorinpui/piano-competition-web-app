@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using System.Net;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CompetitionWebApi.Controllers;
 
@@ -26,7 +25,7 @@ public class ErrorController : ControllerBase
     }
 
     [Route("/error")]
-    public ErrorResponse HandleError()
+    protected ErrorResponse HandleError()
     {
         HttpContext.Response.Headers["Content-Type"] = "application/problem+json";
 
