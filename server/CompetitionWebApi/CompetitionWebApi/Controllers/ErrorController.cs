@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CompetitionWebApi.Controllers;
 

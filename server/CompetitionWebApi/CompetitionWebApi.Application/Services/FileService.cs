@@ -1,8 +1,6 @@
 ﻿using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Net.Http.Headers;
-using static System.Collections.Specialized.BitVector32;
 
 namespace CompetitionWebApi.Application.Services;
 

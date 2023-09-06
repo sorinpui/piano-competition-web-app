@@ -17,7 +17,7 @@ public static class Mapper
         };
     }
 
-    internal static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request, string videoFilePath)
+    internal static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request)
     {
         return new Performance
         {
@@ -28,7 +28,6 @@ public static class Mapper
                 Period = request.Period
             },
 
-            VideoUri = videoFilePath,
             UserId = request.UserId
         };
     }

@@ -12,8 +12,13 @@ public class PerformanceRepository : IPerformanceRepository
         _context = context;
     }
 
-    public async Task CreatePerformance(Performance entity)
+    public async Task CreatePerformanceAsync(Performance entity)
     {
         await _context.AddAsync(entity);
+    }
+
+    public async Task<Performance?> GetPerformanceByIdAsync(int id)
+    {
+        return await _context.Performances.FindAsync(id);
     }
 }

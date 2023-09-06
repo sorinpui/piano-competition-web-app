@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\CompetitionWebApi.Application\CompetitionWebApi.Application.csproj" />
     <ProjectReference Include="..\CompetitionWebApi.Domain\CompetitionWebApi.Domain.csproj" />
-    <ProjectReference Include="..\CompetitionWebApi.Persistance\CompetitionWebApi.DataAccess.csproj" />
+    <ProjectReference Include="..\CompetitionWebApi.DataAccess\CompetitionWebApi.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>

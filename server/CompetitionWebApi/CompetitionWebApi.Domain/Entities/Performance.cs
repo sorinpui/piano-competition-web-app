@@ -7,7 +7,6 @@ public class Performance : EntityBase
     [Required]
     public Piece Piece { get; set; }
 
-    [Required]
     public string VideoUri { get; set; }
 
     [Required]

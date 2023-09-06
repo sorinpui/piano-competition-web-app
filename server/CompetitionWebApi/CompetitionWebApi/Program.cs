@@ -46,13 +46,14 @@ builder.Services.AddScoped<IFileService, FileService>();
 // Authentication services
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-string? secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+//string? secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+string? secretKey = builder.Configuration["JwtSettings:SecurityKey"];
 
-if (secretKey is null)
-{
-    secretKey = Encoding.UTF8.GetString(RandomNumberGenerator.GetBytes(32));
-    Environment.SetEnvironmentVariable("JWT_SECRET_KEY", secretKey);
-}
+//if (secretKey is null)
+//{
+//    secretKey = Encoding.UTF8.GetString(RandomNumberGenerator.GetBytes(32));
+//    Environment.SetEnvironmentVariable("JWT_SECRET_KEY", secretKey);
+//}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -80,9 +81,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-
 app.UseExceptionHandler("/error");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

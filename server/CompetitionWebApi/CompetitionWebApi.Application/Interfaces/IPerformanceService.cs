@@ -1,6 +1,9 @@
-﻿namespace CompetitionWebApi.Application.Interfaces;
+﻿using CompetitionWebApi.Application.Requests;
+
+namespace CompetitionWebApi.Application.Interfaces;
 
 public interface IPerformanceService
 {
-    Task CreatePerformance(string boundary, Stream requestBody);
+    Task SavePerformanceVideo(string boundary, Stream requestBody, int performanceId);
+    Task CreatePerformanceInfoAsync(PerformanceRequest request);
 }

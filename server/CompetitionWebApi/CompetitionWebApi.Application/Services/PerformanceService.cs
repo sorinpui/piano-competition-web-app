@@ -2,7 +2,6 @@
 using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Domain.Entities;
-using CompetitionWebApi.Domain.Enums;
 using CompetitionWebApi.Domain.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -22,9 +21,30 @@ public class PerformanceService : IPerformanceService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task CreatePerformance(string boundary, Stream requestBody)
+    public async Task CreatePerformanceInfoAsync(PerformanceRequest request)
     {
-        PerformanceRequest request = new();
+        User? userFromDb = await _unitOfWork.UserRepository.GetUserByIdAsync(request.UserId);
+
+        if (userFromDb == null)
+        {
+            throw new EntityNotFoundException($"The user with id {request.UserId} doesn't exist.");
+        }
+
+        Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request);
+
+        await _unitOfWork.PerformanceRepository.CreatePerformanceAsync(newPerformance);
+        await _unitOfWork.SaveAsync();
+    }
+
+    public async Task SavePerformanceVideo(string boundary, Stream requestBody, int performanceId)
+    {
+        Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(performanceId);
+
+        if (performanceFromDb == null)
+        {
+            throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
+        }
+
         string videoFilePath = string.Empty;
 
         var reader = new MultipartReader(boundary, requestBody);
@@ -41,51 +61,16 @@ public class PerformanceService : IPerformanceService
                 videoFilePath = await _fileService.UploadLargeFile(fileSection);
             }
 
-            if (contentDisposition.IsFormDisposition())
-            {
-                var dataSection = section.AsFormDataSection();
-
-                string formName = dataSection.Name;
-                string formValue = await dataSection.GetValueAsync();
-
-                switch (formName)
-                {
-                    case "PieceName":
-                        request.PieceName = formValue; 
-                        break;
-
-                    case "Composer":
-                        request.Composer = formValue;
-                        break;
-
-                    case "Period":
-                        request.Period = (Period)int.Parse(formValue); 
-                        break;
-
-                    case "UserId":
-                        request.UserId = int.Parse(formValue);
-                        break;
-
-                    default:
-                        throw new InvalidRequestException("Only the following form fields are allowed: PieceName, Composer, Period and UserId");
-                }
-            }
-
             section = await reader.ReadNextSectionAsync();
         }
 
-        await _validationService.ValidateRequest(request);
-
-        User? userFromDb = await _unitOfWork.UserRepository.GetUserByIdAsync(request.UserId);
-
-        if (userFromDb == null)
+        if (string.IsNullOrEmpty(videoFilePath)) 
         {
-            throw new UserNotFoundException($"The user with id {request.UserId} doesn't exist.");
+            throw new InvalidRequestException("Video performance missing.");
         }
-      
-        Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request, videoFilePath);
-       
-        await _unitOfWork.PerformanceRepository.CreatePerformance(newPerformance);
+
+        performanceFromDb.VideoUri = videoFilePath;
+
         await _unitOfWork.SaveAsync();
     }
 }

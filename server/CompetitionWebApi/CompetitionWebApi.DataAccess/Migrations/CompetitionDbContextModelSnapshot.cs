@@ -33,7 +33,6 @@ namespace CompetitionWebApi.DataAccess.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("VideoUri")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

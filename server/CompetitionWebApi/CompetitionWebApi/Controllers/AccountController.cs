@@ -25,7 +25,7 @@ public class AccountController : ControllerBase
     {
         await _validationService.ValidateRequest(request);
 
-        await _accountService.RegisterUser(request);
+        await _accountService.RegisterUserAsync(request);
 
         return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
     }
@@ -36,7 +36,7 @@ public class AccountController : ControllerBase
     {
         await _validationService.ValidateRequest(request);
 
-        string token = await _accountService.LoginUser(request);
+        string token = await _accountService.LoginUserAsync(request);
 
         return Ok(new SuccessResponse<string> { StatusCode = HttpStatusCode.OK, Payload = token });
     }

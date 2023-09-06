@@ -18,7 +18,7 @@ public class AccountService : IAccountService
         _jwtService = jwtService;
     }
 
-    public async Task RegisterUser(RegisterRequest request)
+    public async Task RegisterUserAsync(RegisterRequest request)
     {
         User user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
@@ -35,13 +35,13 @@ public class AccountService : IAccountService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<string> LoginUser(LoginRequest request)
+    public async Task<string> LoginUserAsync(LoginRequest request)
     {
         User userFromDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (userFromDb == null)
         {
-            throw new UserNotFoundException($"There's no account registered with {request.Email}");
+            throw new EntityNotFoundException($"There's no account registered with {request.Email}");
         }
 
         bool isMatch = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, userFromDb.Password);

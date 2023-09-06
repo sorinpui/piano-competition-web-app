@@ -1,6 +1,5 @@
-﻿using CompetitionWebApi.Application.Exceptions;
-using CompetitionWebApi.Application.Helpers;
-using CompetitionWebApi.Application.Interfaces;
+﻿using CompetitionWebApi.Application.Interfaces;
+using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Application.Responses;
 using CompetitionWebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
@@ -22,15 +21,26 @@ public class PerformanceController : ControllerBase
         _validationService = validationService;
     }
 
-    [HttpPost]
+    [HttpPost("information")]
+    [Authorize(Roles = "Contestant")]
+    public async Task<IActionResult> CreatePerformanceInfo([FromBody] PerformanceRequest request)
+    {
+        await _validationService.ValidateRequest(request);
+
+        await _performanceService.CreatePerformanceInfoAsync(request);
+
+        return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
+    }
+
+    [HttpPost("videos")]
     [DisableFormValueModelBinding]
-    [RequestSizeLimit(300 * 1024 * 10 ^ 6)]
-    [Authorize]
-    public async Task<IActionResult> UploadPerformance()
+    [RequestSizeLimit(300*1024*10^6)] // 300 MB
+    [Authorize(Roles = "Contestant")]
+    public async Task<IActionResult> UploadPerformance([FromQuery] int performanceId)
     {
         string boundary = _validationService.ValidateMultipartRequest(Request);
 
-        await _performanceService.CreatePerformance(boundary, Request.Body);
+        await _performanceService.SavePerformanceVideo(boundary, Request.Body, performanceId);
 
         return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
     }

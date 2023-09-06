@@ -29,7 +29,7 @@ public class ReigsterRequestValidator : AbstractValidator<RegisterRequest>
 
         RuleFor(request => request.RoleId)
             .NotEmpty().WithMessage(emptyFieldMessage)
-            .InclusiveBetween(1, 3).WithMessage("There is no role associated with your input.");
+            .IsInEnum().WithMessage("There is no role associated with your input.");
     }
 
     private bool BeStrong(string password)
