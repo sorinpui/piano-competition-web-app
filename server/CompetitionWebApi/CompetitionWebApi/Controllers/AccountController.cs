@@ -23,7 +23,7 @@ public class AccountController : ControllerBase
     [Route("registration")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest request)
     {
-        await _validationService.ValidateRequest(request);
+        await _validationService.ValidateRequestAsync(request);
 
         await _accountService.RegisterUserAsync(request);
 
@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
     [Route("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginRequest request)
     {
-        await _validationService.ValidateRequest(request);
+        await _validationService.ValidateRequestAsync(request);
 
         string token = await _accountService.LoginUserAsync(request);
 

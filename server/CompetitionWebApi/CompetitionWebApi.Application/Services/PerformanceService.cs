@@ -11,13 +11,11 @@ namespace CompetitionWebApi.Application.Services;
 public class PerformanceService : IPerformanceService
 {
     private readonly IFileService _fileService;
-    private readonly IValidationService _validationService;
     private readonly IUnitOfWork _unitOfWork;
 
-    public PerformanceService(IFileService fileService, IValidationService validationService, IUnitOfWork unitOfWork)
+    public PerformanceService(IFileService fileService, IUnitOfWork unitOfWork)
     {
         _fileService = fileService;
-        _validationService = validationService;
         _unitOfWork = unitOfWork;
     }
 
@@ -74,7 +72,7 @@ public class PerformanceService : IPerformanceService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<Stream> GetPerformanceVideoAsync(int performanceId)
+    public async Task<(Stream, string)> GetPerformanceVideoAsync(int performanceId)
     {
         Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(performanceId);
 
@@ -83,8 +81,14 @@ public class PerformanceService : IPerformanceService
             throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
         }
 
+        User user = await _unitOfWork.UserRepository.GetUserByIdAsync(performanceFromDb.UserId);
+
+        Piece piece = performanceFromDb.Piece;
+
+        string fileName = $"{user.FirstName}_{user.LastName}_{piece.Name.Replace(' ', '_')}_{piece.Composer.Replace(' ', '_')}.mp4";
+
         var stream = new FileStream(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
 
-        return stream;
+        return (stream, fileName);
     }
 }

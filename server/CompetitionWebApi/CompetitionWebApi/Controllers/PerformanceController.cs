@@ -25,7 +25,7 @@ public class PerformanceController : ControllerBase
     [Authorize(Roles = "Contestant")]
     public async Task<IActionResult> CreatePerformanceInfo([FromBody] PerformanceRequest request)
     {
-        await _validationService.ValidateRequest(request);
+        await _validationService.ValidateRequestAsync(request);
 
         await _performanceService.CreatePerformanceInfoAsync(request);
 
@@ -49,8 +49,8 @@ public class PerformanceController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DownloadPerformanceVideo([FromQuery] int performanceId)
     {
-        Stream videoStream = await _performanceService.GetPerformanceVideoAsync(performanceId);
+        (Stream, string) videoResult = await _performanceService.GetPerformanceVideoAsync(performanceId);
 
-        return File(videoStream, "application/octet-stream", "test.mp4");
+        return File(videoResult.Item1, "application/octet-stream", videoResult.Item2);
     }
 }

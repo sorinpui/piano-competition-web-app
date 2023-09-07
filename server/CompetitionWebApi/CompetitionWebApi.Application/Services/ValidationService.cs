@@ -16,7 +16,7 @@ public class ValidationService : IValidationService
         _validatorsFactory = validatorsFactory;
     }
 
-    public async Task ValidateRequest<T>(T request)
+    public async Task ValidateRequestAsync<T>(T request)
     {
         await _validatorsFactory.GetValidator<T>().ValidateAndThrowAsync(request);
     }
