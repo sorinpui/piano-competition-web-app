@@ -2,5 +2,6 @@
 
 public interface IJwtService
 {
-    public string CreateToken(int roleId);
+    public string CreateToken(int roleId, int userId);
+    public int GetNameIdentifier();
 }

@@ -6,6 +6,7 @@ using CompetitionWebApi.Domain.Entities;
 using CompetitionWebApi.Domain.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
+using System.Security.Claims;
 
 namespace CompetitionWebApi.Application.Services;
 
@@ -13,15 +14,24 @@ public class PerformanceService : IPerformanceService
 {
     private readonly IFileService _fileService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IJwtService _jwtService;
 
-    public PerformanceService(IFileService fileService, IUnitOfWork unitOfWork)
+    public PerformanceService(IFileService fileService, IUnitOfWork unitOfWork, IJwtService jwtService)
     {
         _fileService = fileService;
         _unitOfWork = unitOfWork;
+        _jwtService = jwtService;
     }
 
     public async Task CreatePerformanceInfoAsync(PerformanceRequest request)
     {
+        int nameIdentifierClaimValue = _jwtService.GetNameIdentifier();
+        
+        if (nameIdentifierClaimValue != request.UserId)
+        {
+            throw new ForbiddenException("You cannot create performances for other users.");
+        }
+
         User? userFromDb = await _unitOfWork.UserRepository.GetUserByIdAsync(request.UserId);
 
         if (userFromDb == null)

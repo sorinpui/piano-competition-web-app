@@ -51,7 +51,7 @@ public class AccountService : IAccountService
             throw new IncorrectPasswordException();
         }
 
-        string token = _jwtService.CreateToken(userFromDb.RoleId);
+        string token = _jwtService.CreateToken(userFromDb.RoleId, userFromDb.Id);
 
         return token;
     }
