@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompetitionWebApi.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CompetitionWebApi.DataAccess", "CompetitionWebApi.DataAccess\CompetitionWebApi.DataAccess.csproj", "{ED1E9322-9DC4-4590-95B4-534C4040915E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompetitionWebApi.Utilities", "CompetitionWebApi.Utilities\CompetitionWebApi.Utilities.csproj", "{D412885C-B9FC-46E1-A8DA-549BDB2FDEE4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{ED1E9322-9DC4-4590-95B4-534C4040915E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED1E9322-9DC4-4590-95B4-534C4040915E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED1E9322-9DC4-4590-95B4-534C4040915E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D412885C-B9FC-46E1-A8DA-549BDB2FDEE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D412885C-B9FC-46E1-A8DA-549BDB2FDEE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D412885C-B9FC-46E1-A8DA-549BDB2FDEE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D412885C-B9FC-46E1-A8DA-549BDB2FDEE4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
