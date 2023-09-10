@@ -1,4 +1,5 @@
-﻿using CompetitionWebApi.Application.Interfaces;
+﻿using CompetitionWebApi.Application.Dtos;
+using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Application.Responses;
 using CompetitionWebApi.Attributes;
@@ -49,8 +50,8 @@ public class PerformanceController : ControllerBase
     [Authorize]
     public async Task<IActionResult> DownloadPerformanceVideo([FromQuery] int performanceId)
     {
-        (Stream, string) videoResult = await _performanceService.GetPerformanceVideoAsync(performanceId);
+        PerformanceVideoDto result = await _performanceService.GetPerformanceVideoAsync(performanceId);
 
-        return File(videoResult.Item1, "application/octet-stream", videoResult.Item2);
+        return File(result.VideoStream, "video/mp4", result.FileName);
     }
 }

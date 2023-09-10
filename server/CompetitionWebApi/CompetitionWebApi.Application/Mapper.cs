@@ -13,7 +13,7 @@ public static class Mapper
             LastName = request.LastName,
             Email = request.Email,
             Password = passwordHash,
-            RoleId = request.RoleId
+            RoleId = (int)request.RoleId
         };
     }
 

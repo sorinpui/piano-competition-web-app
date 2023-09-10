@@ -26,7 +26,6 @@ public class JwtService : IJwtService
             new Claim(ClaimTypes.Role, userRole.ToString())
         };
 
-        //string secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
         string secretKey = _configuration["JwtSettings:SecurityKey"];
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);

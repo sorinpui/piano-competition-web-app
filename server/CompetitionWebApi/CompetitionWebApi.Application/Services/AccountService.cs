@@ -20,7 +20,7 @@ public class AccountService : IAccountService
 
     public async Task RegisterUserAsync(RegisterRequest request)
     {
-        User user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+        User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (user != null)
         {
@@ -37,7 +37,7 @@ public class AccountService : IAccountService
 
     public async Task<string> LoginUserAsync(LoginRequest request)
     {
-        User userFromDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+        User? userFromDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (userFromDb == null)
         {

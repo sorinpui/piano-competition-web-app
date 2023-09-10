@@ -1,4 +1,6 @@
-﻿namespace CompetitionWebApi.Application.Requests;
+﻿using CompetitionWebApi.Domain.Enums;
+
+namespace CompetitionWebApi.Application.Requests;
 
 public class RegisterRequest
 {
@@ -6,5 +8,5 @@ public class RegisterRequest
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
-    public int RoleId { get; set; }
+    public Role RoleId { get; set; }
 }

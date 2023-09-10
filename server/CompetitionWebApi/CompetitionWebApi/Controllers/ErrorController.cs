@@ -25,7 +25,7 @@ public class ErrorController : ControllerBase
     }
 
     [Route("/error")]
-    protected ErrorResponse HandleError()
+    public ErrorResponse HandleError()
     {
         HttpContext.Response.Headers["Content-Type"] = "application/problem+json";
 

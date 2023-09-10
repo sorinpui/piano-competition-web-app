@@ -2,7 +2,6 @@
 using FluentValidation;
 using System.Text.RegularExpressions;
 
-
 namespace CompetitionWebApi.Application.Validators;
 
 public class ReigsterRequestValidator : AbstractValidator<RegisterRequest>
@@ -29,7 +28,8 @@ public class ReigsterRequestValidator : AbstractValidator<RegisterRequest>
 
         RuleFor(request => request.RoleId)
             .NotEmpty().WithMessage(emptyFieldMessage)
-            .IsInEnum().WithMessage("There is no role associated with your input.");
+            .IsInEnum().WithMessage("There is no role associated with your input.")
+            .NotEqual(Domain.Enums.Role.Judge).WithMessage("This role is for judges only.");
     }
 
     private bool BeStrong(string password)

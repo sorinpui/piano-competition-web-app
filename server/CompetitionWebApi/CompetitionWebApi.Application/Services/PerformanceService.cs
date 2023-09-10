@@ -1,4 +1,5 @@
-﻿using CompetitionWebApi.Application.Exceptions;
+﻿using CompetitionWebApi.Application.Dtos;
+using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Domain.Entities;
@@ -26,6 +27,13 @@ public class PerformanceService : IPerformanceService
         if (userFromDb == null)
         {
             throw new EntityNotFoundException($"The user with id {request.UserId} doesn't exist.");
+        }
+
+        List<Performance> performancesFromDb = await _unitOfWork.PerformanceRepository.GetPerformancesByUserId(request.UserId);
+
+        if (performancesFromDb.Any(x => x.Piece.Period.Equals(request.Period)))
+        {
+            throw new DuplicatePeriodException($"There's already an uploaded performance from {request.Period} period.");
         }
 
         Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request);
@@ -72,7 +80,7 @@ public class PerformanceService : IPerformanceService
         await _unitOfWork.SaveAsync();
     }
 
-    public async Task<(Stream, string)> GetPerformanceVideoAsync(int performanceId)
+    public async Task<PerformanceVideoDto> GetPerformanceVideoAsync(int performanceId)
     {
         Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(performanceId);
 
@@ -81,14 +89,23 @@ public class PerformanceService : IPerformanceService
             throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
         }
 
-        User user = await _unitOfWork.UserRepository.GetUserByIdAsync(performanceFromDb.UserId);
+        if (performanceFromDb.VideoUri == null)
+        {
+            throw new VideoNotFoundException($"The requested video from performance with id {performanceId} is not uploaded.");
+        }
+
+        User? user = await _unitOfWork.UserRepository.GetUserByIdAsync(performanceFromDb.UserId);
+
+        if (user == null)
+        {
+            throw new EntityNotFoundException($"The user with id {performanceFromDb.UserId} doesn't exist.");
+        }
 
         Piece piece = performanceFromDb.Piece;
 
         string fileName = $"{user.FirstName}_{user.LastName}_{piece.Name.Replace(' ', '_')}_{piece.Composer.Replace(' ', '_')}.mp4";
-
         var stream = new FileStream(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
 
-        return (stream, fileName);
+        return new PerformanceVideoDto { VideoStream = stream, FileName = fileName };
     }
 }
