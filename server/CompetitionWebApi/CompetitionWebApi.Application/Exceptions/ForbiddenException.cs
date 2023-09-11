@@ -4,13 +4,12 @@ using System.Net;
 namespace CompetitionWebApi.Application.Exceptions;
 
 public class ForbiddenException : Exception, IServiceException
-{
-    public HttpStatusCode StatusCode => HttpStatusCode.Forbidden;
+{ 
+    public HttpStatusCode Status => HttpStatusCode.Forbidden;
 
-    public string ErrorMessage { get; }
+    public string Title { get; set; }
 
-    public ForbiddenException(string message)
-    {
-        ErrorMessage = message;
-    }
+    public string Detail { get; set; }
+
+    public ForbiddenException() { }
 }

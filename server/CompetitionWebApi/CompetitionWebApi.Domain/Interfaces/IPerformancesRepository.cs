@@ -2,7 +2,7 @@
 
 namespace CompetitionWebApi.Domain.Interfaces;
 
-public interface IPerformanceRepository
+public interface IPerformancesRepository
 {
     Task CreatePerformanceAsync(Performance entity);
     Task<Performance?> GetPerformanceByIdAsync(int id);

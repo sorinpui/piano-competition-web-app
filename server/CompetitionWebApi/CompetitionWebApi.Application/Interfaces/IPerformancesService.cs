@@ -3,7 +3,7 @@ using CompetitionWebApi.Application.Requests;
 
 namespace CompetitionWebApi.Application.Interfaces;
 
-public interface IPerformanceService
+public interface IPerformancesService
 {
     Task CreatePerformanceInfoAsync(PerformanceRequest request);
     Task SavePerformanceVideoAsync(string boundary, Stream requestBody, int performanceId);

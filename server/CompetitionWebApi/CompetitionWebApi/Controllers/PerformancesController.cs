@@ -9,14 +9,14 @@ using System.Net;
 
 namespace CompetitionWebApi.Controllers;
 
-[Route("api/[controller]s")]
+[Route("api/[controller]")]
 [ApiController]
-public class PerformanceController : ControllerBase
+public class PerformancesController : ControllerBase
 {
-    private readonly IPerformanceService _performanceService;
+    private readonly IPerformancesService _performanceService;
     private readonly IValidationService _validationService;
 
-    public PerformanceController(IPerformanceService performanceService, IValidationService validationService)
+    public PerformancesController(IPerformancesService performanceService, IValidationService validationService)
     {
         _performanceService = performanceService;
         _validationService = validationService;
@@ -30,7 +30,7 @@ public class PerformanceController : ControllerBase
 
         await _performanceService.CreatePerformanceInfoAsync(request);
 
-        return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
+        return Created(string.Empty, new SuccessResponse<string> { Status = HttpStatusCode.Created, Payload = string.Empty });
     }
 
     [HttpPost("videos")]
@@ -43,7 +43,7 @@ public class PerformanceController : ControllerBase
 
         await _performanceService.SavePerformanceVideoAsync(boundary, Request.Body, performanceId);
 
-        return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
+        return Created(string.Empty, new SuccessResponse<string> { Status = HttpStatusCode.Created, Payload = string.Empty });
     }
 
     [HttpGet("videos")]

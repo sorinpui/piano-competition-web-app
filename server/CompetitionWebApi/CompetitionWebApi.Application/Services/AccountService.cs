@@ -4,6 +4,7 @@ using CompetitionWebApi.Domain.Interfaces;
 using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Application.Interfaces;
+using System.Net;
 
 namespace CompetitionWebApi.Application.Services;
 
@@ -24,7 +25,11 @@ public class AccountService : IAccountService
 
         if (user != null)
         {
-            throw new EmailAlreadyInUseException(request.Email);
+            throw new EmailAlreadyInUseException()
+            {
+                Title = "Email Conflict",
+                Detail = $"There's already an account associated with the email {request.Email}."
+            };
         }
 
         string passwordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Password);
@@ -41,14 +46,22 @@ public class AccountService : IAccountService
 
         if (userFromDb == null)
         {
-            throw new EntityNotFoundException($"There's no account registered with {request.Email}");
+            throw new EntityNotFoundException()
+            {
+                Title = "Account Not Found",
+                Detail = $"There's no account registered with the email {request.Email}"
+            };
         }
 
         bool isMatch = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, userFromDb.Password);
 
         if (!isMatch)
         {
-            throw new IncorrectPasswordException();
+            throw new AuthenticationException(HttpStatusCode.Unauthorized)
+            {
+                Title = "Invalid Credentials",
+                Detail = "The password is incorrect."
+            };
         }
 
         string token = _jwtService.CreateToken(userFromDb.RoleId, userFromDb.Id);

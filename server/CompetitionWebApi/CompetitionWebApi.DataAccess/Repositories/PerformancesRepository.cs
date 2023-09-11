@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompetitionWebApi.DataAccess.Repositories;
 
-public class PerformanceRepository : IPerformanceRepository
+public class PerformancesRepository : IPerformancesRepository
 {
     private readonly CompetitionDbContext _context;
 
-    public PerformanceRepository(CompetitionDbContext context)
+    public PerformancesRepository(CompetitionDbContext context)
     {
         _context = context;
     }

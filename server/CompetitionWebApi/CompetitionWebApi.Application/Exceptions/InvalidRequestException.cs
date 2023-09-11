@@ -5,12 +5,11 @@ namespace CompetitionWebApi.Application.Exceptions;
 
 public class InvalidRequestException : Exception, IServiceException
 {
-    public HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
+    public HttpStatusCode Status => HttpStatusCode.BadRequest;
 
-    public string ErrorMessage { get; }
+    public string Title { get; set; }
 
-    public InvalidRequestException(string message) : base(message)
-    {
-        ErrorMessage = message;
-    }
+    public string Detail { get; set; }
+
+    public InvalidRequestException() { }
 }

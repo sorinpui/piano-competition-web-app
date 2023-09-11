@@ -7,16 +7,18 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 {
     private readonly CompetitionDbContext _context;
 
-    public IUserRepository UserRepository { get; }
-    public IPerformanceRepository PerformanceRepository { get; }
+    public IUsersRepository UserRepository { get; }
+    public IPerformancesRepository PerformanceRepository { get; }
+    public IScoresRepository ScoreRepository { get; }
 
     private bool isDisposed;
 
     public UnitOfWork(CompetitionDbContext context)
     {
         _context = context;
-        UserRepository = new UserRepository(_context);
-        PerformanceRepository = new PerformanceRepository(_context);
+        UserRepository = new UsersRepository(_context);
+        PerformanceRepository = new PerformancesRepository(_context);
+        ScoreRepository = new ScoresRepository(_context);
     }
 
     public async Task SaveAsync()

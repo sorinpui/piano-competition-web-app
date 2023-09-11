@@ -2,7 +2,7 @@
 
 namespace CompetitionWebApi.Domain.Interfaces;
 
-public interface IUserRepository
+public interface IUsersRepository
 {
     Task CreateUserAsync(User entity);
     Task<User?> GetUserByEmailAsync(string email);

@@ -3,14 +3,12 @@ using System.Net;
 
 namespace CompetitionWebApi.Application.Exceptions;
 
-internal class EntityNotFoundException : Exception, IServiceException
+public class EntityNotFoundException : Exception, IServiceException
 {
-    public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
+    public HttpStatusCode Status => HttpStatusCode.NotFound;
 
-    public string ErrorMessage { get; }
+    public string Title { get; set; }
+    public string Detail { get; set; }
 
-    public EntityNotFoundException(string errorMessage)
-    {
-        ErrorMessage = errorMessage;
-    }
+    public EntityNotFoundException() { }
 }

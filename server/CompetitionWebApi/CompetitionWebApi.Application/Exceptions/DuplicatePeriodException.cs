@@ -5,12 +5,10 @@ namespace CompetitionWebApi.Application.Exceptions;
 
 public class DuplicatePeriodException : Exception, IServiceException
 {
-    public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
+    public HttpStatusCode Status => HttpStatusCode.Conflict;
 
-    public string ErrorMessage { get; }
+    public string Title { get; set; }
+    public string Detail { get; set; }
 
-    public DuplicatePeriodException(string message) : base(message)
-    {
-        ErrorMessage = message;
-    }
+    public DuplicatePeriodException() { }
 }

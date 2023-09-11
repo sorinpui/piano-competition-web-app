@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Security.Cryptography;
 using CompetitionWebApi.Application.Factories;
 using CompetitionWebApi.DataAccess.Repositories;
    
@@ -27,22 +26,27 @@ builder.Services.AddSwaggerGen();
 // Database context and repositories
 string? connectionString = builder.Configuration.GetConnectionString("CompetitionDb");
 builder.Services.AddDbContext<CompetitionDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IPerformanceRepository, PerformanceRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IPerformancesRepository, PerformancesRepository>();
+builder.Services.AddScoped<IScoresRepository, ScoresRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Request validators
 builder.Services.AddTransient<IValidator<RegisterRequest>, ReigsterRequestValidator>();
 builder.Services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddTransient<IValidator<PerformanceRequest>, PerformanceRequestValidator>();
+builder.Services.AddTransient<IValidator<ScoreRequest>, ScoreValidator>();
 
 builder.Services.AddSingleton<IValidatorsFactory, ValidatorsFactory>();
 
+// Validation services
+builder.Services.AddScoped<IValidationService, ValidationService>();
+
 // Application services
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IPerformanceService, PerformanceService>();
-builder.Services.AddScoped<IValidationService, ValidationService>();
-builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IPerformancesService, PerformanceService>();
+builder.Services.AddScoped<IFilesService, FileService>();
+builder.Services.AddScoped<IScoresService, ScoreService>();
 
 // Authentication services
 builder.Services.AddScoped<IJwtService, JwtService>();

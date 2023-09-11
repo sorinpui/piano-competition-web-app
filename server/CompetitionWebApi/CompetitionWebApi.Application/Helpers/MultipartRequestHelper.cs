@@ -11,12 +11,20 @@ public static class MultipartRequestHelper
 
         if (string.IsNullOrWhiteSpace(boundary))
         {
-            throw new InvalidRequestException("Missing content-type boundary.");
+            throw new InvalidRequestException() 
+            {
+                Title = "Invalid Boundary",
+                Detail = "This type of request must have a content type boundary."
+            };
         }
 
         if (boundary.Length > lengthLimit)
         {
-            throw new InvalidRequestException($"Multipart boundary length limit {lengthLimit} exceeded.");
+            throw new InvalidRequestException()
+            {
+                Title = "Invalid Boundary",
+                Detail = $"Multipart boundary length limit {lengthLimit} exceeded."
+            };
         }
 
         return boundary;

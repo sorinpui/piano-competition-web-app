@@ -27,7 +27,11 @@ public class ValidationService : IValidationService
 
         if (!MultipartRequestHelper.IsMultipartContentType(contentType))
         {
-            throw new InvalidRequestException("Wrong media type.");
+            throw new InvalidRequestException() 
+            {
+                Title = "Invalid Content Type", 
+                Detail = "The media type must be multipart/form-data."
+            };
         }
 
         int maxBoundaryLength = 70;

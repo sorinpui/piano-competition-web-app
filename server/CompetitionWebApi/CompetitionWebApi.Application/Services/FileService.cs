@@ -4,13 +4,17 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace CompetitionWebApi.Application.Services;
 
-public class FileService : IFileService
+public class FileService : IFilesService
 {
     public async Task<string> UploadLargeFile(FileMultipartSection section)
     {
         if (!Path.GetExtension(section.FileName.ToLowerInvariant()).Contains(".mp4"))
         {
-            throw new InvalidRequestException("Invalid file extension. Only mp4 video format is allowed.");
+            throw new InvalidRequestException()
+            {
+                Title = "Invalid File Extension",
+                Detail = "The file must be a performance video with mp4 extension."
+            };
         }
 
         string finalFileName = Path.GetRandomFileName() + Path.GetExtension(section.FileName);

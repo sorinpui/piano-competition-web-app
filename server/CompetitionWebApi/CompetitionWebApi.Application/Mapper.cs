@@ -17,7 +17,7 @@ public static class Mapper
         };
     }
 
-    internal static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request)
+    public static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request)
     {
         return new Performance
         {
@@ -29,6 +29,17 @@ public static class Mapper
             },
 
             UserId = request.UserId
+        };
+    }
+
+    public static Score ScoreRequestToScoreEntity(ScoreRequest request)
+    {
+        return new Score
+        {
+            Interpretation = request.Interpretation,
+            Technicality = request.Technicality,
+            Difficulty = request.Difficulty,
+            PerformanceId = request.PerformanceId
         };
     }
 }

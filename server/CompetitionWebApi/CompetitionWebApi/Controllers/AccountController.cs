@@ -19,25 +19,37 @@ public class AccountController : ControllerBase
         _validationService = validationService;
     }
 
-    [HttpPost]
-    [Route("registration")]
+    [HttpPost("registration")]
     public async Task<IActionResult> RegisterUser([FromBody] RegisterRequest request)
     {
         await _validationService.ValidateRequestAsync(request);
 
         await _accountService.RegisterUserAsync(request);
 
-        return Created(string.Empty, new SuccessResponse<string> { StatusCode = HttpStatusCode.Created, Payload = string.Empty });
+        SuccessResponse<string> response = new()
+        {
+            Message = "Account registered successfully.",
+            Payload = "",
+            Status = HttpStatusCode.Created 
+        };
+
+        return Created(string.Empty, response);
     }
 
-    [HttpPost]
-    [Route("login")]
+    [HttpPost("login")]
     public async Task<IActionResult> LoginUser([FromBody] LoginRequest request)
     {
         await _validationService.ValidateRequestAsync(request);
 
         string token = await _accountService.LoginUserAsync(request);
 
-        return Ok(new SuccessResponse<string> { StatusCode = HttpStatusCode.OK, Payload = token });
+        SuccessResponse<string> response = new()
+        {
+            Message = "Logged in successfully.",
+            Payload = token,
+            Status = HttpStatusCode.OK
+        };
+
+        return Ok(response);
     }
 }

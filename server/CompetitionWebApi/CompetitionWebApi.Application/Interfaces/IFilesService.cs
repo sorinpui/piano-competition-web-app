@@ -2,7 +2,7 @@
 
 namespace CompetitionWebApi.Application.Interfaces;
 
-public interface IFileService
+public interface IFilesService
 {
     Task<string> UploadLargeFile(FileMultipartSection section);
 }

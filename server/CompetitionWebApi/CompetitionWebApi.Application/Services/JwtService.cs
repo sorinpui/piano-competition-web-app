@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 
@@ -54,7 +55,11 @@ public class JwtService : IJwtService
 
         if (claims == null)
         {
-            throw new JwtClaimsException("The token doesn't contain any claims.");
+            throw new AuthenticationException(HttpStatusCode.Forbidden)
+            {
+                Title = "Missing Claims",
+                Detail = "The token doesn't contain any claims."
+            };
         }
 
         foreach (var claim in claims)
@@ -67,7 +72,11 @@ public class JwtService : IJwtService
 
         if (userId == 0)
         {
-            throw new JwtClaimsException("The token doesn't contain the NameIdentifier claim.");
+            throw new AuthenticationException(HttpStatusCode.Forbidden)
+            {
+                Title = "Missing Sub Claim",
+                Detail = "The token doesn't contain the subject claim."
+            };
         }
 
         return userId;

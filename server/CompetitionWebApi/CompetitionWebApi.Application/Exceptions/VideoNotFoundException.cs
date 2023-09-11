@@ -5,12 +5,11 @@ namespace CompetitionWebApi.Application.Exceptions;
 
 public class VideoNotFoundException : Exception, IServiceException
 {
-    public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
+    public HttpStatusCode Status => HttpStatusCode.NotFound;
 
-    public string ErrorMessage { get; }
+    public string Title { get; set; }
 
-    public VideoNotFoundException(string message) : base(message)
-    {
-        ErrorMessage = message;
-    }
+    public string Detail { get; set; }
+
+    public VideoNotFoundException() { }
 }

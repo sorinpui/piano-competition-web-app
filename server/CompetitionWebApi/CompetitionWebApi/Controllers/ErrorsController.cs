@@ -8,11 +8,11 @@ using System.Net;
 namespace CompetitionWebApi.Controllers;
 
 [ApiController]
-public class ErrorController : ControllerBase
+public class ErrorsController : ControllerBase
 {
     public Dictionary<HttpStatusCode, string> DocumentationOf { get; }
     
-    public ErrorController()
+    public ErrorsController()
     {
         DocumentationOf = new()
         {
@@ -32,8 +32,6 @@ public class ErrorController : ControllerBase
 
         Exception? exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
-        Console.WriteLine(exception?.Message);
-
         if (exception is ValidationException validationException)
         {
             HttpContext.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -41,16 +39,17 @@ public class ErrorController : ControllerBase
             return new ValidationErrorResponse
             {
                 Type = DocumentationOf[HttpStatusCode.BadRequest],
-                Title = "One or more fields are not valid.",
+                Title = "Validation Error",
                 Status = (int)HttpStatusCode.BadRequest,
+                Detail = "One or more fields are not valid.",
                 Errors = validationException.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage)
             };
         }
 
-        var (statusCode, message) = exception switch
+        var (statusCode, title, detail) = exception switch
         {
-            IServiceException serviceException => (serviceException.StatusCode, serviceException.ErrorMessage),
-            _ => (HttpStatusCode.InternalServerError, "Internal server error.")
+            IServiceException ex => (ex.Status, ex.Title, ex.Detail),
+            _ => (HttpStatusCode.InternalServerError, "Internal server error.", string.Empty)
         };
 
         HttpContext.Response.StatusCode = (int)statusCode;
@@ -58,8 +57,9 @@ public class ErrorController : ControllerBase
         return new ErrorResponse
         {
             Type = DocumentationOf[statusCode],
-            Title = message,
-            Status = (int)statusCode
+            Title = title,
+            Status = (int)statusCode,
+            Detail = detail
         };
     }
 }

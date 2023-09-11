@@ -5,12 +5,10 @@ namespace CompetitionWebApi.Application.Exceptions;
 
 public class EmailAlreadyInUseException : Exception, IServiceException
 {
-    public string Email { get; }
-    public HttpStatusCode StatusCode => HttpStatusCode.Conflict;
-    public string ErrorMessage => $"{Email} is already in use.";
+    public HttpStatusCode Status => HttpStatusCode.Conflict;
 
-    public EmailAlreadyInUseException(string email) : base(email)
-    {
-        Email = email;
-    }
+    public string Title { get; set; }
+    public string Detail { get; set; }
+
+    public EmailAlreadyInUseException() { }
 }

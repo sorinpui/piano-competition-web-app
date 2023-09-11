@@ -6,17 +6,16 @@ using CompetitionWebApi.Domain.Entities;
 using CompetitionWebApi.Domain.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
-using System.Security.Claims;
 
 namespace CompetitionWebApi.Application.Services;
 
-public class PerformanceService : IPerformanceService
+public class PerformanceService : IPerformancesService
 {
-    private readonly IFileService _fileService;
+    private readonly IFilesService _fileService;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IJwtService _jwtService;
 
-    public PerformanceService(IFileService fileService, IUnitOfWork unitOfWork, IJwtService jwtService)
+    public PerformanceService(IFilesService fileService, IUnitOfWork unitOfWork, IJwtService jwtService)
     {
         _fileService = fileService;
         _unitOfWork = unitOfWork;
@@ -29,21 +28,22 @@ public class PerformanceService : IPerformanceService
         
         if (nameIdentifierClaimValue != request.UserId)
         {
-            throw new ForbiddenException("You cannot create performances for other users.");
-        }
-
-        User? userFromDb = await _unitOfWork.UserRepository.GetUserByIdAsync(request.UserId);
-
-        if (userFromDb == null)
-        {
-            throw new EntityNotFoundException($"The user with id {request.UserId} doesn't exist.");
+            throw new ForbiddenException()
+            {
+                Title = "Insufficient Privileges",
+                Detail = "This account does not have rights to create performances on behalf of other users."
+            };
         }
 
         List<Performance> performancesFromDb = await _unitOfWork.PerformanceRepository.GetPerformancesByUserId(request.UserId);
 
         if (performancesFromDb.Any(x => x.Piece.Period.Equals(request.Period)))
         {
-            throw new DuplicatePeriodException($"There's already an uploaded performance from {request.Period} period.");
+            throw new DuplicatePeriodException()
+            {
+                Title = "Performance Conflict",
+                Detail = $"There's already an uploaded performance from {request.Period} period."
+            };
         }
 
         Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request);
@@ -58,7 +58,11 @@ public class PerformanceService : IPerformanceService
 
         if (performanceFromDb == null)
         {
-            throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
+            throw new EntityNotFoundException()
+            {
+                Title = "Performance Not Found",
+                Detail = $"The performance with id {performanceId} doesn't exist."
+            };
         }
 
         string videoFilePath = string.Empty;
@@ -80,11 +84,6 @@ public class PerformanceService : IPerformanceService
             section = await reader.ReadNextSectionAsync();
         }
 
-        if (string.IsNullOrEmpty(videoFilePath)) 
-        {
-            throw new InvalidRequestException("Video performance missing.");
-        }
-
         performanceFromDb.VideoUri = videoFilePath;
 
         await _unitOfWork.SaveAsync();
@@ -96,20 +95,23 @@ public class PerformanceService : IPerformanceService
 
         if (performanceFromDb == null)
         {
-            throw new EntityNotFoundException($"The performance with id {performanceId} doesn't exist.");
+            throw new EntityNotFoundException()
+            {
+                Title = "Performance Not Found",
+                Detail = $"The performance with id {performanceId} doesn't exist."
+            };
         }
 
         if (performanceFromDb.VideoUri == null)
         {
-            throw new VideoNotFoundException($"The requested video from performance with id {performanceId} is not uploaded.");
+            throw new VideoNotFoundException()
+            {
+                Title = "Performance Video Not Found",
+                Detail = $"The video from this performance is not uploaded yet."
+            };
         }
 
         User? user = await _unitOfWork.UserRepository.GetUserByIdAsync(performanceFromDb.UserId);
-
-        if (user == null)
-        {
-            throw new EntityNotFoundException($"The user with id {performanceFromDb.UserId} doesn't exist.");
-        }
 
         Piece piece = performanceFromDb.Piece;
 
