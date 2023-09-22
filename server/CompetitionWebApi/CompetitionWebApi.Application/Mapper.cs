@@ -1,5 +1,6 @@
 ﻿using CompetitionWebApi.Domain.Entities;
 using CompetitionWebApi.Application.Requests;
+using CompetitionWebApi.Application.Dtos;
 
 namespace CompetitionWebApi.Application;
 
@@ -40,6 +41,28 @@ public static class Mapper
             Technicality = request.Technicality,
             Difficulty = request.Difficulty,
             PerformanceId = request.PerformanceId
+        };
+    }
+
+    public static PerformanceDto PerformanceEntityToPerformanceDto(Performance performance, User user)
+    {
+        return new PerformanceDto
+        {
+            PerformanceId = performance.Id,
+            ContestantName = $"{user.FirstName} {user.LastName}",
+            Piece = performance.Piece.Name,
+            Composer = performance.Piece.Composer,
+            Period = performance.Piece.Period.ToString(),
+        };
+    }
+
+    public static Comment CommentRequestToCommentEntity(CommentRequest request)
+    {
+        return new Comment
+        {
+            Message = request.Message,
+            PerformanceId = request.PerformanceId,
+            UserId = request.UserId
         };
     }
 }

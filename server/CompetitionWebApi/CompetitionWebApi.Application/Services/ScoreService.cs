@@ -23,8 +23,7 @@ public class ScoreService : IScoresService
         {
             throw new EntityNotFoundException()
             {
-                Title = "Performance Not Found",
-                Detail = "The performance you want to score doesn't exist."
+                ErrorMessage = "The performance you want to score doesn't exist."
             };
         }
 

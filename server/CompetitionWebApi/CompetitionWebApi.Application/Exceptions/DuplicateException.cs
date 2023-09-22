@@ -3,12 +3,11 @@ using System.Net;
 
 namespace CompetitionWebApi.Application.Exceptions;
 
-public class DuplicatePeriodException : Exception, IServiceException
+public class DuplicateException : Exception, IServiceException
 {
     public HttpStatusCode Status => HttpStatusCode.Conflict;
 
-    public string Title { get; set; }
-    public string Detail { get; set; }
+    public string ErrorMessage { get; init; }
 
-    public DuplicatePeriodException() { }
+    public DuplicateException() { }
 }

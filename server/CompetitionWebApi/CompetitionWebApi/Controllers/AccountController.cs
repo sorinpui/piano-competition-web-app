@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
 
         await _accountService.RegisterUserAsync(request);
 
-        SuccessResponse<string> response = new()
+        var response = new SuccessResponse<string>()
         {
             Message = "Account registered successfully.",
             Payload = "",
@@ -40,10 +40,10 @@ public class AccountController : ControllerBase
     public async Task<IActionResult> LoginUser([FromBody] LoginRequest request)
     {
         await _validationService.ValidateRequestAsync(request);
-
+        
         string token = await _accountService.LoginUserAsync(request);
 
-        SuccessResponse<string> response = new()
+        var response = new SuccessResponse<string>()
         {
             Message = "Logged in successfully.",
             Payload = token,

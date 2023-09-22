@@ -26,9 +26,9 @@ builder.Services.AddSwaggerGen();
 // Database context and repositories
 string? connectionString = builder.Configuration.GetConnectionString("CompetitionDb");
 builder.Services.AddDbContext<CompetitionDbContext>(options => options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IUsersRepository, UsersRepository>();
-builder.Services.AddScoped<IPerformancesRepository, PerformancesRepository>();
-builder.Services.AddScoped<IScoresRepository, ScoresRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPerformanceRepository, PerformanceRepository>();
+builder.Services.AddScoped<IScoreRepository, ScoreRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Request validators
@@ -52,7 +52,7 @@ builder.Services.AddScoped<IScoresService, ScoreService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 
 //string? secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
-string? secretKey = builder.Configuration["JwtSettings:SecurityKey"];
+string? secretKey = builder.Configuration["JwtSettings:SecretKey"];
 
 //if (secretKey is null)
 //{

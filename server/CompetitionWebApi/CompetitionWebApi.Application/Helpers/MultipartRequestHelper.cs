@@ -13,8 +13,7 @@ public static class MultipartRequestHelper
         {
             throw new InvalidRequestException() 
             {
-                Title = "Invalid Boundary",
-                Detail = "This type of request must have a content type boundary."
+                ErrorMessage = "This type of request must have a content type boundary."
             };
         }
 
@@ -22,8 +21,7 @@ public static class MultipartRequestHelper
         {
             throw new InvalidRequestException()
             {
-                Title = "Invalid Boundary",
-                Detail = $"Multipart boundary length limit {lengthLimit} exceeded."
+                ErrorMessage = $"Multipart boundary length limit {lengthLimit} exceeded."
             };
         }
 

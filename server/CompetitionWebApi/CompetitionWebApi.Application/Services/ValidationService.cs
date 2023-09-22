@@ -29,8 +29,7 @@ public class ValidationService : IValidationService
         {
             throw new InvalidRequestException() 
             {
-                Title = "Invalid Content Type", 
-                Detail = "The media type must be multipart/form-data."
+                ErrorMessage = "The media type must be multipart/form-data."
             };
         }
 

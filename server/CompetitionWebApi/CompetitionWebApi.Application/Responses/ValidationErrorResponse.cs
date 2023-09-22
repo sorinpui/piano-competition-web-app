@@ -4,6 +4,6 @@ namespace CompetitionWebApi.Application.Responses;
 
 public class ValidationErrorResponse : ErrorResponse
 {
-    [JsonPropertyOrder(4)]
+    [JsonPropertyOrder(2)]
     public Dictionary<string, string> Errors { get; set; }
 }

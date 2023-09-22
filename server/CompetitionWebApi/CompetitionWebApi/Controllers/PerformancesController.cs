@@ -30,12 +30,19 @@ public class PerformancesController : ControllerBase
 
         await _performanceService.CreatePerformanceInfoAsync(request);
 
-        return Created(string.Empty, new SuccessResponse<string> { Status = HttpStatusCode.Created, Payload = string.Empty });
+        var response = new SuccessResponse<string>()
+        {
+            Message = "Performance information created successfully.",
+            Status = HttpStatusCode.Created,
+            Payload = string.Empty
+        };
+
+        return Created(string.Empty, response);
     }
 
     [HttpPost("videos")]
     [DisableFormValueModelBinding]
-    [RequestSizeLimit(300*1024*10^6)] // 300 MB
+    [RequestSizeLimit(314_572_800)] // 300 MB
     [Authorize(Roles = "Contestant")]
     public async Task<IActionResult> UploadPerformanceVideo([FromQuery] int performanceId)
     {
@@ -53,5 +60,21 @@ public class PerformancesController : ControllerBase
         PerformanceVideoDto result = await _performanceService.GetPerformanceVideoAsync(performanceId);
 
         return File(result.VideoStream, "video/mp4", result.FileName);
+    }
+
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetAllPerformances()
+    {
+        var performances = await _performanceService.GetAllPerformancesAsync();
+
+        var response = new SuccessResponse<List<PerformanceDto>>
+        {
+            Message = "Performances retrieved successfully.",
+            Payload = performances,
+            Status = HttpStatusCode.OK
+        };
+
+        return Ok(response);
     }
 }

@@ -7,9 +7,7 @@ public class InvalidRequestException : Exception, IServiceException
 {
     public HttpStatusCode Status => HttpStatusCode.BadRequest;
 
-    public string Title { get; set; }
-
-    public string Detail { get; set; }
+    public string ErrorMessage { get; init; }
 
     public InvalidRequestException() { }
 }

@@ -1,4 +1,5 @@
 ﻿using CompetitionWebApi.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace CompetitionWebApi.Application.Requests;
 

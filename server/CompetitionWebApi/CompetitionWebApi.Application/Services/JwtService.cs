@@ -32,7 +32,7 @@ public class JwtService : IJwtService
             new Claim(ClaimTypes.NameIdentifier, userId.ToString())
         };
 
-        string secretKey = _configuration["JwtSettings:SecurityKey"];
+        string secretKey = _configuration["JwtSettings:SecretKey"];
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
         var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
@@ -57,8 +57,7 @@ public class JwtService : IJwtService
         {
             throw new AuthenticationException(HttpStatusCode.Forbidden)
             {
-                Title = "Missing Claims",
-                Detail = "The token doesn't contain any claims."
+                ErrorMessage = "The token doesn't contain any claims."
             };
         }
 
@@ -74,8 +73,7 @@ public class JwtService : IJwtService
         {
             throw new AuthenticationException(HttpStatusCode.Forbidden)
             {
-                Title = "Missing Sub Claim",
-                Detail = "The token doesn't contain the subject claim."
+                ErrorMessage = "The token doesn't contain the subject claim."
             };
         }
 

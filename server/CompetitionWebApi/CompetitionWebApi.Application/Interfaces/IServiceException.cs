@@ -4,7 +4,6 @@ namespace CompetitionWebApi.Application.Interfaces;
 
 public interface IServiceException
 {
+    public string ErrorMessage { get; }
     public HttpStatusCode Status { get; }
-    public string Title { get; set; }
-    public string Detail { get; set; }
 }

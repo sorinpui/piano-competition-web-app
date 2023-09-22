@@ -5,7 +5,8 @@ namespace CompetitionWebApi.Application.Dtos;
 public class PerformanceDto
 {
     public int PerformanceId { get; set; }
-    public string PieceName { get; set; }
-    public string PieceComposer { get; set; }
-    public Period Period { get; set; }
+    public string ContestantName { get; set; }
+    public string Piece { get; set; }
+    public string Composer { get; set; }
+    public string Period { get; set; }
 }

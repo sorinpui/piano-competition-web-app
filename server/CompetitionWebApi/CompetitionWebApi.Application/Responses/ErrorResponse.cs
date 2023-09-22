@@ -1,18 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Net;
+using System.Text.Json.Serialization;
 
 namespace CompetitionWebApi.Application.Responses;
 
 public class ErrorResponse
 {
     [JsonPropertyOrder(0)]
-    public string Type { get; set; }
+    public string ErrorMessage { get; set; }
 
     [JsonPropertyOrder(1)]
-    public string Title { get; set; }
-
-    [JsonPropertyOrder(2)]
-    public int Status { get; set; }
-
-    [JsonPropertyOrder(3)]
-    public string Detail { get; set; }
+    public HttpStatusCode Status { get; set; }
 }

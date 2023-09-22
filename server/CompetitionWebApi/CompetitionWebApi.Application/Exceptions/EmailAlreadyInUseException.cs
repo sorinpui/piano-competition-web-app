@@ -7,8 +7,7 @@ public class EmailAlreadyInUseException : Exception, IServiceException
 {
     public HttpStatusCode Status => HttpStatusCode.Conflict;
 
-    public string Title { get; set; }
-    public string Detail { get; set; }
+    public string ErrorMessage { get; init; }
 
     public EmailAlreadyInUseException() { }
 }

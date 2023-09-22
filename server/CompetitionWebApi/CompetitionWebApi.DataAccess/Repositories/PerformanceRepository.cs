@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompetitionWebApi.DataAccess.Repositories;
 
-public class PerformancesRepository : IPerformancesRepository
+public class PerformanceRepository : IPerformanceRepository
 {
     private readonly CompetitionDbContext _context;
 
-    public PerformancesRepository(CompetitionDbContext context)
+    public PerformanceRepository(CompetitionDbContext context)
     {
         _context = context;
     }
@@ -20,16 +20,24 @@ public class PerformancesRepository : IPerformancesRepository
 
     public async Task<Performance?> GetPerformanceByIdAsync(int id)
     {
-        return await _context.Performances.FindAsync(id);
+        Performance? performance = await _context.Performances.FindAsync(id);
+
+        return performance;
     }
 
     public async Task<List<Performance>> GetAllPerformancesAsync()
     {
-        return await _context.Performances.ToListAsync();
+        List<Performance> performances = await _context.Performances.ToListAsync();
+
+        return performances;
     }
 
     public async Task<List<Performance>> GetPerformancesByUserId(int userId)
     {
-        return await _context.Performances.Where(x => x.UserId.Equals(userId)).ToListAsync();
+        List<Performance> performances = await _context.Performances
+            .Where(x => x.UserId.Equals(userId))
+            .ToListAsync();
+
+        return performances;
     }
 }

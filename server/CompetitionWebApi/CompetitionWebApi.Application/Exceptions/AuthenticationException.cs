@@ -7,9 +7,7 @@ public class AuthenticationException : Exception, IServiceException
 {
     public HttpStatusCode Status { get; }
 
-    public string Title { get; set; }
-
-    public string Detail { get; set; }
+    public string ErrorMessage { get; init; }
 
     public AuthenticationException(HttpStatusCode statusCode)
     {

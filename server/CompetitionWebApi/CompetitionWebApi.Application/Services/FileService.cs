@@ -12,8 +12,7 @@ public class FileService : IFilesService
         {
             throw new InvalidRequestException()
             {
-                Title = "Invalid File Extension",
-                Detail = "The file must be a performance video with mp4 extension."
+                ErrorMessage = "The file must be a performance video with mp4 extension."
             };
         }
 

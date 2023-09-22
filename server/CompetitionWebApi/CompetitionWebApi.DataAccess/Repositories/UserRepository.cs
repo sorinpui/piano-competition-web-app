@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CompetitionWebApi.DataAccess.Repositories;
 
-public class UsersRepository : IUsersRepository
+public class UserRepository : IUserRepository
 {
     private readonly CompetitionDbContext _context;
 
-    public UsersRepository(CompetitionDbContext context)
+    public UserRepository(CompetitionDbContext context)
     {
         _context = context;
     }
@@ -30,5 +30,10 @@ public class UsersRepository : IUsersRepository
         User? user = await _context.Users.FindAsync(id);
 
         return user;
+    }
+
+    public async Task<List<User>> GetAllUsersAsync()
+    {
+        return await _context.Users.ToListAsync();
     }
 }

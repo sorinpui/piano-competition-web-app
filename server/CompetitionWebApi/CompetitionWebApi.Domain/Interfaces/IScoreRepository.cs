@@ -2,7 +2,7 @@
 
 namespace CompetitionWebApi.Domain.Interfaces;
 
-public interface IScoresRepository
+public interface IScoreRepository
 {
     Task CreateScoreAsync(Score entity);
 }

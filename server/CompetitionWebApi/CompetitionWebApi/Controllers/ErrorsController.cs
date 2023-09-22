@@ -10,26 +10,9 @@ namespace CompetitionWebApi.Controllers;
 [ApiController]
 public class ErrorsController : ControllerBase
 {
-    public Dictionary<HttpStatusCode, string> DocumentationOf { get; }
-    
-    public ErrorsController()
-    {
-        DocumentationOf = new()
-        {
-            { HttpStatusCode.InternalServerError, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.6.1" },
-            { HttpStatusCode.BadRequest, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.1" },
-            { HttpStatusCode.Conflict, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.8" },
-            { HttpStatusCode.Unauthorized, "https://datatracker.ietf.org/doc/html/rfc7235#section-3.1" },
-            { HttpStatusCode.NotFound, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.4" },
-            { HttpStatusCode.Forbidden, "https://datatracker.ietf.org/doc/html/rfc7231#section-6.5.3" }
-        };
-    }
-
     [Route("/error")]
     public ErrorResponse HandleError()
     {
-        HttpContext.Response.Headers["Content-Type"] = "application/problem+json";
-
         Exception? exception = HttpContext.Features.Get<IExceptionHandlerFeature>()?.Error;
 
         if (exception is ValidationException validationException)
@@ -38,28 +21,24 @@ public class ErrorsController : ControllerBase
 
             return new ValidationErrorResponse
             {
-                Type = DocumentationOf[HttpStatusCode.BadRequest],
-                Title = "Validation Error",
-                Status = (int)HttpStatusCode.BadRequest,
-                Detail = "One or more fields are not valid.",
+                ErrorMessage = "One or more fields are not valid.",
+                Status = HttpStatusCode.BadRequest,
                 Errors = validationException.Errors.ToDictionary(e => e.PropertyName, e => e.ErrorMessage)
             };
         }
 
-        var (statusCode, title, detail) = exception switch
+        var (errorMessage, status) = exception switch
         {
-            IServiceException ex => (ex.Status, ex.Title, ex.Detail),
-            _ => (HttpStatusCode.InternalServerError, "Internal server error.", string.Empty)
+            IServiceException ex => (ex.ErrorMessage, ex.Status),
+            _ => ("Internal server error.", HttpStatusCode.InternalServerError)
         };
 
-        HttpContext.Response.StatusCode = (int)statusCode;
+        HttpContext.Response.StatusCode = (int)status;
 
         return new ErrorResponse
         {
-            Type = DocumentationOf[statusCode],
-            Title = title,
-            Status = (int)statusCode,
-            Detail = detail
+            ErrorMessage = errorMessage,
+            Status = status
         };
     }
 }

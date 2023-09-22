@@ -2,9 +2,10 @@
 
 public interface IUnitOfWork
 {
-    IUsersRepository UserRepository { get; }
-    IPerformancesRepository PerformanceRepository { get; }
-    IScoresRepository ScoreRepository { get; }
+    IUserRepository UserRepository { get; }
+    IPerformanceRepository PerformanceRepository { get; }
+    IScoreRepository ScoreRepository { get; }
+    ICommentRepository CommentRepository { get; }
 
     Task SaveAsync();
 }

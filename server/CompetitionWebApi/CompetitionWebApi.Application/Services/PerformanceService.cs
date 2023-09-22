@@ -3,6 +3,7 @@ using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Domain.Entities;
+using CompetitionWebApi.Domain.Enums;
 using CompetitionWebApi.Domain.Interfaces;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
@@ -30,8 +31,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new ForbiddenException()
             {
-                Title = "Insufficient Privileges",
-                Detail = "This account does not have rights to create performances on behalf of other users."
+                ErrorMessage = "This account does not have rights to create performances on behalf of other users."
             };
         }
 
@@ -39,10 +39,9 @@ public class PerformanceService : IPerformancesService
 
         if (performancesFromDb.Any(x => x.Piece.Period.Equals(request.Period)))
         {
-            throw new DuplicatePeriodException()
+            throw new DuplicateException()
             {
-                Title = "Performance Conflict",
-                Detail = $"There's already an uploaded performance from {request.Period} period."
+                ErrorMessage = $"There's already an uploaded performance from {request.Period} period."
             };
         }
 
@@ -60,12 +59,19 @@ public class PerformanceService : IPerformancesService
         {
             throw new EntityNotFoundException()
             {
-                Title = "Performance Not Found",
-                Detail = $"The performance with id {performanceId} doesn't exist."
+                ErrorMessage = $"The performance with id {performanceId} doesn't exist."
             };
         }
 
-        string videoFilePath = string.Empty;
+        string? videoFilePath = performanceFromDb.VideoUri;
+
+        if (videoFilePath != null)
+        {
+            throw new DuplicateException()
+            {
+                ErrorMessage = "This performance already has a video uploaded."
+            };
+        }
 
         var reader = new MultipartReader(boundary, requestBody);
         var section = await reader.ReadNextSectionAsync();
@@ -97,8 +103,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new EntityNotFoundException()
             {
-                Title = "Performance Not Found",
-                Detail = $"The performance with id {performanceId} doesn't exist."
+                ErrorMessage = $"The performance with id {performanceId} doesn't exist."
             };
         }
 
@@ -106,8 +111,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new VideoNotFoundException()
             {
-                Title = "Performance Video Not Found",
-                Detail = $"The video from this performance is not uploaded yet."
+                ErrorMessage = $"The video from this performance is not uploaded yet."
             };
         }
 
@@ -115,9 +119,28 @@ public class PerformanceService : IPerformancesService
 
         Piece piece = performanceFromDb.Piece;
 
-        string fileName = $"{user.FirstName}_{user.LastName}_{piece.Name.Replace(' ', '_')}_{piece.Composer.Replace(' ', '_')}.mp4";
-        var stream = new FileStream(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
+        string pieceName = piece.Name.Replace(' ', '_');
+        string composer = piece.Composer.Replace(' ', '_');
 
-        return new PerformanceVideoDto { VideoStream = stream, FileName = fileName };
+        string fileName = $"{user.FirstName}_{user.LastName}_{pieceName}_{composer}.mp4";
+        FileStream stream = new(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
+
+        return new PerformanceVideoDto() 
+        {
+            VideoStream = stream,
+            FileName = fileName 
+        };
+    }
+
+    public async Task<List<PerformanceDto>> GetAllPerformancesAsync()
+    {
+        List<Performance> performances = await _unitOfWork.PerformanceRepository.GetAllPerformancesAsync();
+        List<User> users = await _unitOfWork.UserRepository.GetAllUsersAsync();
+
+        var performancesDto = from performance in performances
+                              join user in users on performance.UserId equals user.Id
+                              select Mapper.PerformanceEntityToPerformanceDto(performance, user);
+
+        return performancesDto.ToList();
     }
 }

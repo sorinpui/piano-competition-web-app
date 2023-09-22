@@ -27,8 +27,7 @@ public class AccountService : IAccountService
         {
             throw new EmailAlreadyInUseException()
             {
-                Title = "Email Conflict",
-                Detail = $"There's already an account associated with the email {request.Email}."
+                ErrorMessage = $"There's already an account associated with the email {request.Email}."
             };
         }
 
@@ -48,8 +47,7 @@ public class AccountService : IAccountService
         {
             throw new EntityNotFoundException()
             {
-                Title = "Account Not Found",
-                Detail = $"There's no account registered with the email {request.Email}"
+                ErrorMessage = $"There's no account registered with the email {request.Email}"
             };
         }
 
@@ -59,8 +57,7 @@ public class AccountService : IAccountService
         {
             throw new AuthenticationException(HttpStatusCode.Unauthorized)
             {
-                Title = "Invalid Credentials",
-                Detail = "The password is incorrect."
+                ErrorMessage = "The password is incorrect."
             };
         }
 
