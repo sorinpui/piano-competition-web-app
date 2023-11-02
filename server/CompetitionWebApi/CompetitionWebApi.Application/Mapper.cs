@@ -18,7 +18,7 @@ public static class Mapper
         };
     }
 
-    public static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request)
+    public static Performance PerformanceRequestToPerformanceEntity(PerformanceRequest request, int userId)
     {
         return new Performance
         {
@@ -28,8 +28,8 @@ public static class Mapper
                 Composer = request.Composer,
                 Period = request.Period
             },
-
-            UserId = request.UserId
+            CreatedAt = DateTime.UtcNow,
+            UserId = userId
         };
     }
 

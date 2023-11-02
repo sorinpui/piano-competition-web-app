@@ -7,5 +7,4 @@ public class PerformanceRequest
     public string PieceName { get; set; }
     public string Composer { get; set; }
     public Period Period { get; set; }
-    public int UserId { get; set; }
 }

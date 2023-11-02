@@ -1,13 +1,11 @@
-﻿using CompetitionWebApi.Application.Interfaces;
-using System.Net;
+﻿using System.Net;
 
 namespace CompetitionWebApi.Application.Exceptions;
 
-public class EntityNotFoundException : Exception, IServiceException
+public class EntityNotFoundException : ServiceException
 {
-    public HttpStatusCode Status => HttpStatusCode.NotFound;
-
-    public string ErrorMessage { get; init; }
-
-    public EntityNotFoundException() { }
+    public EntityNotFoundException() 
+    {
+        Status = HttpStatusCode.NotFound;
+    }
 }

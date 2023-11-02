@@ -1,13 +1,11 @@
-﻿using CompetitionWebApi.Application.Interfaces;
-using System.Net;
+﻿using System.Net;
 
 namespace CompetitionWebApi.Application.Exceptions;
 
-public class InvalidRequestException : Exception, IServiceException
+public class InvalidRequestException : ServiceException
 {
-    public HttpStatusCode Status => HttpStatusCode.BadRequest;
-
-    public string ErrorMessage { get; init; }
-
-    public InvalidRequestException() { }
+    public InvalidRequestException()
+    {
+        Status = HttpStatusCode.BadRequest;
+    }
 }

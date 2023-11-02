@@ -24,10 +24,10 @@ public class ValidationService : IValidationService
     public string ValidateMultipartRequest(HttpRequest request)
     {
         string? contentType = request.ContentType;
-
+       
         if (!MultipartRequestHelper.IsMultipartContentType(contentType))
         {
-            throw new InvalidRequestException() 
+            throw new InvalidRequestException()
             {
                 ErrorMessage = "The media type must be multipart/form-data."
             };

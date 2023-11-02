@@ -47,7 +47,7 @@ public class JwtService : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public int GetNameIdentifier()
+    public int GetSubjectClaim()
     {
         var claims = GetClaimsFromJwt();
 

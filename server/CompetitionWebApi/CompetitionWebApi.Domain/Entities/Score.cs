@@ -15,7 +15,6 @@ public class Score : EntityBase
     [Required]
     public int Difficulty { get; set; }
 
-    [Required]
     public int PerformanceId { get; set; }
     public Performance Performance { get; set; }
 }

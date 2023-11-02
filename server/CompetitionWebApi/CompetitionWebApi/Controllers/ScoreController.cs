@@ -8,14 +8,14 @@ using System.Net;
 
 namespace CompetitionWebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]s")]
     [ApiController]
-    public class ScoresController : ControllerBase
+    public class ScoreController : ControllerBase
     {
-        private readonly IScoresService _scoreService;
+        private readonly IScoreService _scoreService;
         private readonly IValidationService _validationService;
 
-        public ScoresController(IScoresService scoreService, IValidationService validationService)
+        public ScoreController(IScoreService scoreService, IValidationService validationService)
         {
             _scoreService = scoreService;
             _validationService = validationService;
@@ -29,7 +29,7 @@ namespace CompetitionWebApi.Controllers
 
             await _scoreService.CreateScoreAsync(request);
 
-            return Created(string.Empty, new SuccessResponse<string> { Status = HttpStatusCode.Created, Payload = string.Empty });
+            return Created(string.Empty, new SuccessResponse<string> { Payload = string.Empty });
         }
     }
 }

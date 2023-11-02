@@ -5,7 +5,7 @@ namespace CompetitionWebApi.Application.Validators;
 
 public class LoginRequestValidator : AbstractValidator<LoginRequest>
 {
-    private const string _emptyField = "This field is empty.";
+    private const string _emptyField = "This field cannot be empty.";
 
     public LoginRequestValidator()
     {

@@ -1,10 +1,9 @@
 ﻿using CompetitionWebApi.Domain.Entities;
 using CompetitionWebApi.Domain.Interfaces;
-
-using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Requests;
 using CompetitionWebApi.Application.Interfaces;
-using System.Net;
+using Microsoft.AspNetCore.Mvc;
+using CompetitionWebApi.Application.Responses;
 
 namespace CompetitionWebApi.Application.Services;
 
@@ -19,16 +18,17 @@ public class AccountService : IAccountService
         _jwtService = jwtService;
     }
 
-    public async Task RegisterUserAsync(RegisterRequest request)
+    public async Task<IActionResult> RegisterUserAsync(RegisterRequest request)
     {
         User? user = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
 
         if (user != null)
         {
-            throw new EmailAlreadyInUseException()
+            return new ConflictObjectResult(new ErrorResponse
             {
-                ErrorMessage = $"There's already an account associated with the email {request.Email}."
-            };
+                Title = "Email Conflict",
+                Detail = "There's already an account associated with this email."
+            });
         }
 
         string passwordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(request.Password);
@@ -37,32 +37,39 @@ public class AccountService : IAccountService
 
         await _unitOfWork.UserRepository.CreateUserAsync(newUser);
         await _unitOfWork.SaveAsync();
+
+        return new CreatedResult(string.Empty, new SuccessResponse<string>
+        {
+            Message = "Account created successfully",
+            Payload = null
+        });
     }
 
-    public async Task<string> LoginUserAsync(LoginRequest request)
+    public async Task<IActionResult> LoginUserAsync(LoginRequest request)
     {
         User? userFromDb = await _unitOfWork.UserRepository.GetUserByEmailAsync(request.Email);
+        bool isMatch = false;
 
-        if (userFromDb == null)
+        if (userFromDb != null)
         {
-            throw new EntityNotFoundException()
-            {
-                ErrorMessage = $"There's no account registered with the email {request.Email}"
-            };
+            isMatch = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, userFromDb.Password);
         }
 
-        bool isMatch = BCrypt.Net.BCrypt.EnhancedVerify(request.Password, userFromDb.Password);
-
-        if (!isMatch)
+        if (userFromDb == null || !isMatch)
         {
-            throw new AuthenticationException(HttpStatusCode.Unauthorized)
+            return new UnauthorizedObjectResult(new ErrorResponse
             {
-                ErrorMessage = "The password is incorrect."
-            };
+                Title = "Bad Credentials",
+                Detail = "The email or password is incorrect."
+            });
         }
 
         string token = _jwtService.CreateToken(userFromDb.RoleId, userFromDb.Id);
 
-        return token;
+        return new OkObjectResult(new SuccessResponse<string>
+        {
+            Message = "Logged in successfully.",
+            Payload = token
+        });
     }
 }

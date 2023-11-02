@@ -6,30 +6,30 @@ namespace CompetitionWebApi.Application.Validators;
 
 public class ReigsterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    private const string _passwordError = "Requirements: 8 characters, at least one uppercase letter, one symbol and one digit.";
-    private const string _emptyFieldError = "This field is empty.";
+    private const string _passwordError = "The password must be at least 8 characters long containing lowercase and uppercase letters, at least one symbol and at least one digit.";
+    private const string _empty = "This field cannot be empty.";
 
     public ReigsterRequestValidator()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
         RuleFor(request => request.FirstName)
-            .NotEmpty().WithMessage(_emptyFieldError);
+            .NotEmpty().WithMessage(_empty);
         RuleFor(request => request.LastName)
-            .NotEmpty().WithMessage(_emptyFieldError);
+            .NotEmpty().WithMessage(_empty);
 
         RuleFor(request => request.Email)
-            .NotEmpty().WithMessage(_emptyFieldError)
+            .NotEmpty().WithMessage(_empty)
             .EmailAddress().WithMessage("Invalid email address.");
 
         RuleFor(request => request.Password)
-            .NotEmpty().WithMessage(_emptyFieldError)
+            .NotEmpty().WithMessage(_empty)
             .Must(BeStrong).WithMessage(_passwordError);
 
         RuleFor(request => request.RoleId)
-            .NotEmpty().WithMessage(_emptyFieldError)
-            .IsInEnum().WithMessage("There is no role associated with your input.")
-            .NotEqual(Domain.Enums.Role.Judge).WithMessage("This role is for judges only.");
+            .NotEmpty().WithMessage(_empty)
+            .IsInEnum().WithMessage("The value provided is not valid.")
+            .NotEqual(Domain.Enums.Role.Judge).WithMessage("The value provided is not valid.");
     }
 
     private bool BeStrong(string password)

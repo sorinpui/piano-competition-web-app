@@ -6,7 +6,7 @@ using CompetitionWebApi.Domain.Interfaces;
 
 namespace CompetitionWebApi.Application.Services;
 
-public class ScoreService : IScoresService
+public class ScoreService : IScoreService
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -23,6 +23,7 @@ public class ScoreService : IScoresService
         {
             throw new EntityNotFoundException()
             {
+                Title = "Performance Not Found",
                 ErrorMessage = "The performance you want to score doesn't exist."
             };
         }

@@ -8,13 +8,16 @@ public class FileService : IFilesService
 {
     public async Task<string> UploadLargeFile(FileMultipartSection section)
     {
-        if (!Path.GetExtension(section.FileName.ToLowerInvariant()).Contains(".mp4"))
+        var untrustedFileName = Path.GetFileName(section.FileName);
+
+        if (!Path.GetExtension(untrustedFileName).Contains(".mp4"))
         {
             throw new InvalidRequestException()
             {
+                Title = "Bad File Extension",
                 ErrorMessage = "The file must be a performance video with mp4 extension."
             };
-        }
+        } 
 
         string finalFileName = Path.GetRandomFileName() + Path.GetExtension(section.FileName);
         string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);

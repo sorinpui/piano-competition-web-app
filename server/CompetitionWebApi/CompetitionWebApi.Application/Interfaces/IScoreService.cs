@@ -2,7 +2,7 @@
 
 namespace CompetitionWebApi.Application.Interfaces;
 
-public interface IScoresService
+public interface IScoreService
 {
     Task CreateScoreAsync(ScoreRequest request);
 }

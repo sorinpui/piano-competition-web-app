@@ -11,12 +11,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CompetitionWebApi.Application.Factories;
 using CompetitionWebApi.DataAccess.Repositories;
-   
+using System.Text.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+
 builder.Services.AddHttpContextAccessor();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -44,9 +47,9 @@ builder.Services.AddScoped<IValidationService, ValidationService>();
 
 // Application services
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IPerformancesService, PerformanceService>();
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
 builder.Services.AddScoped<IFilesService, FileService>();
-builder.Services.AddScoped<IScoresService, ScoreService>();
+builder.Services.AddScoped<IScoreService, ScoreService>();
 
 // Authentication services
 builder.Services.AddScoped<IJwtService, JwtService>();

@@ -8,10 +8,11 @@ public class Comment : EntityBase
     public string Message { get; set; }
 
     [Required]
+    public DateTime CreatedAt { get; set; }
+
     public int PerformanceId { get; set; }
     public Performance Performance { get; set; }
 
-    [Required]
     public int UserId { get; set; }
     public User User { get; set; }
 }

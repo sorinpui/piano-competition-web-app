@@ -18,7 +18,6 @@ public class User : EntityBase
     [Required]
     public string Password { get; set; }
 
-    [Required]
     public int RoleId { get; set; }
     public Role Role { get; set; }
 }

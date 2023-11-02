@@ -2,15 +2,16 @@
 using CompetitionWebApi.Application.Exceptions;
 using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
+using CompetitionWebApi.Application.Responses;
 using CompetitionWebApi.Domain.Entities;
-using CompetitionWebApi.Domain.Enums;
 using CompetitionWebApi.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Net.Http.Headers;
 
 namespace CompetitionWebApi.Application.Services;
 
-public class PerformanceService : IPerformancesService
+public class PerformanceService : IPerformanceService
 {
     private readonly IFilesService _fileService;
     private readonly IUnitOfWork _unitOfWork;
@@ -23,32 +24,37 @@ public class PerformanceService : IPerformancesService
         _jwtService = jwtService;
     }
 
-    public async Task CreatePerformanceInfoAsync(PerformanceRequest request)
+    public async Task<IActionResult> CreatePerformanceInfoAsync(PerformanceRequest request)
     {
-        int nameIdentifierClaimValue = _jwtService.GetNameIdentifier();
+        int userId = _jwtService.GetSubjectClaim();
+
+        List<Performance> performancesFromDb = await _unitOfWork.PerformanceRepository.GetPerformancesByUserId(userId);
+
+        bool pieceAlreadyExists = performancesFromDb.Any(x => x.Piece.Period.Equals(request.Period));
         
-        if (nameIdentifierClaimValue != request.UserId)
+        if (pieceAlreadyExists)
         {
-            throw new ForbiddenException()
+            var errorResponse = new ErrorResponse
             {
-                ErrorMessage = "This account does not have rights to create performances on behalf of other users."
+                Title = "Duplicate Performance",
+                Detail = $"There's already an uploaded performance from {request.Period} period."
             };
+
+            return new ConflictObjectResult(errorResponse);
         }
 
-        List<Performance> performancesFromDb = await _unitOfWork.PerformanceRepository.GetPerformancesByUserId(request.UserId);
-
-        if (performancesFromDb.Any(x => x.Piece.Period.Equals(request.Period)))
-        {
-            throw new DuplicateException()
-            {
-                ErrorMessage = $"There's already an uploaded performance from {request.Period} period."
-            };
-        }
-
-        Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request);
+        Performance newPerformance = Mapper.PerformanceRequestToPerformanceEntity(request, userId);
 
         await _unitOfWork.PerformanceRepository.CreatePerformanceAsync(newPerformance);
         await _unitOfWork.SaveAsync();
+
+        var successResponse = new SuccessResponse<string>
+        {
+            Message = "Performance information created successfully.",
+            Payload = null
+        };
+
+        return new CreatedResult(string.Empty, successResponse);
     }
 
     public async Task SavePerformanceVideoAsync(string boundary, Stream requestBody, int performanceId)
@@ -59,6 +65,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new EntityNotFoundException()
             {
+                Title = "Resource Not Found",
                 ErrorMessage = $"The performance with id {performanceId} doesn't exist."
             };
         }
@@ -69,6 +76,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new DuplicateException()
             {
+                Title = "Duplicate Video",
                 ErrorMessage = "This performance already has a video uploaded."
             };
         }
@@ -76,18 +84,22 @@ public class PerformanceService : IPerformancesService
         var reader = new MultipartReader(boundary, requestBody);
         var section = await reader.ReadNextSectionAsync();
 
-        while (section != null)
+        var contentDisposition = ContentDispositionHeaderValue.Parse(section.ContentDisposition);
+
+        if (contentDisposition.IsFileDisposition())
         {
-            var contentDisposition = ContentDispositionHeaderValue.Parse(section.ContentDisposition);
+            var fileSection = section.AsFileSection();
 
-            if (contentDisposition.IsFileDisposition())
+            videoFilePath = await _fileService.UploadLargeFile(fileSection);
+        }
+        
+        if (videoFilePath == null)
+        {
+            throw new VideoNotFoundException
             {
-                var fileSection = section.AsFileSection();
-
-                videoFilePath = await _fileService.UploadLargeFile(fileSection);
-            }
-
-            section = await reader.ReadNextSectionAsync();
+                Title = "Missing Video",
+                ErrorMessage = "Performance video was not uploaded."
+            };
         }
 
         performanceFromDb.VideoUri = videoFilePath;
@@ -103,6 +115,7 @@ public class PerformanceService : IPerformancesService
         {
             throw new EntityNotFoundException()
             {
+                Title = "Performance Not Found",
                 ErrorMessage = $"The performance with id {performanceId} doesn't exist."
             };
         }
@@ -111,7 +124,8 @@ public class PerformanceService : IPerformancesService
         {
             throw new VideoNotFoundException()
             {
-                ErrorMessage = $"The video from this performance is not uploaded yet."
+                Title = "Video Not Found",
+                ErrorMessage = $"The video from this performance has not been uploaded yet."
             };
         }
 
@@ -122,7 +136,7 @@ public class PerformanceService : IPerformancesService
         string pieceName = piece.Name.Replace(' ', '_');
         string composer = piece.Composer.Replace(' ', '_');
 
-        string fileName = $"{user.FirstName}_{user.LastName}_{pieceName}_{composer}.mp4";
+        string fileName = $"{user!.FirstName}_{user.LastName}_{pieceName}_{composer}.mp4";
         FileStream stream = new(performanceFromDb.VideoUri, FileMode.Open, FileAccess.Read);
 
         return new PerformanceVideoDto() 

@@ -5,18 +5,17 @@ using CompetitionWebApi.Application.Responses;
 using CompetitionWebApi.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace CompetitionWebApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/[controller]s")]
 [ApiController]
-public class PerformancesController : ControllerBase
+public class PerformanceController : ControllerBase
 {
-    private readonly IPerformancesService _performanceService;
+    private readonly IPerformanceService _performanceService;
     private readonly IValidationService _validationService;
 
-    public PerformancesController(IPerformancesService performanceService, IValidationService validationService)
+    public PerformanceController(IPerformanceService performanceService, IValidationService validationService)
     {
         _performanceService = performanceService;
         _validationService = validationService;
@@ -28,34 +27,33 @@ public class PerformancesController : ControllerBase
     {
         await _validationService.ValidateRequestAsync(request);
 
-        await _performanceService.CreatePerformanceInfoAsync(request);
+        IActionResult result = await _performanceService.CreatePerformanceInfoAsync(request);
 
-        var response = new SuccessResponse<string>()
-        {
-            Message = "Performance information created successfully.",
-            Status = HttpStatusCode.Created,
-            Payload = string.Empty
-        };
-
-        return Created(string.Empty, response);
+        return result;
     }
 
-    [HttpPost("videos")]
+    [HttpPost("videos/{performanceId}")]
     [DisableFormValueModelBinding]
     [RequestSizeLimit(314_572_800)] // 300 MB
     [Authorize(Roles = "Contestant")]
-    public async Task<IActionResult> UploadPerformanceVideo([FromQuery] int performanceId)
+    public async Task<IActionResult> UploadPerformanceVideo([FromRoute] int performanceId)
     {
         string boundary = _validationService.ValidateMultipartRequest(Request);
 
         await _performanceService.SavePerformanceVideoAsync(boundary, Request.Body, performanceId);
 
-        return Created(string.Empty, new SuccessResponse<string> { Status = HttpStatusCode.Created, Payload = string.Empty });
+        var response = new SuccessResponse<string>
+        {
+            Message = "Performance video uploaded successfully.",
+            Payload = null
+        };
+
+        return Created(string.Empty, response);
     }
 
-    [HttpGet("videos")]
+    [HttpGet("videos/{performanceId}")]
     [Authorize]
-    public async Task<IActionResult> DownloadPerformanceVideo([FromQuery] int performanceId)
+    public async Task<IActionResult> DownloadPerformanceVideo([FromRoute] int performanceId)
     {
         PerformanceVideoDto result = await _performanceService.GetPerformanceVideoAsync(performanceId);
 
@@ -71,8 +69,7 @@ public class PerformancesController : ControllerBase
         var response = new SuccessResponse<List<PerformanceDto>>
         {
             Message = "Performances retrieved successfully.",
-            Payload = performances,
-            Status = HttpStatusCode.OK
+            Payload = performances
         };
 
         return Ok(response);

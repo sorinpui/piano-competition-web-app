@@ -1,8 +1,6 @@
 ﻿using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
-using CompetitionWebApi.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace CompetitionWebApi.Controllers;
 
@@ -24,16 +22,9 @@ public class AccountController : ControllerBase
     {
         await _validationService.ValidateRequestAsync(request);
 
-        await _accountService.RegisterUserAsync(request);
+        IActionResult result = await _accountService.RegisterUserAsync(request);
 
-        var response = new SuccessResponse<string>()
-        {
-            Message = "Account registered successfully.",
-            Payload = "",
-            Status = HttpStatusCode.Created 
-        };
-
-        return Created(string.Empty, response);
+        return result;
     }
 
     [HttpPost("login")]
@@ -41,15 +32,8 @@ public class AccountController : ControllerBase
     {
         await _validationService.ValidateRequestAsync(request);
         
-        string token = await _accountService.LoginUserAsync(request);
+        IActionResult result = await _accountService.LoginUserAsync(request);
 
-        var response = new SuccessResponse<string>()
-        {
-            Message = "Logged in successfully.",
-            Payload = token,
-            Status = HttpStatusCode.OK
-        };
-
-        return Ok(response);
+        return result;
     }
 }

@@ -8,8 +8,11 @@ public class Performance : EntityBase
     public Piece Piece { get; set; }
 
     public string? VideoUri { get; set; }
+    public int Likes { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    [Required]
     public int UserId { get; set; }
     public User User { get; set; }
+
+    public ICollection<Comment> Comments { get; } = new List<Comment>();
 }

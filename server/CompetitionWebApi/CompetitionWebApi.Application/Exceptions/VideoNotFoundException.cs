@@ -1,13 +1,11 @@
-﻿using CompetitionWebApi.Application.Interfaces;
-using System.Net;
+﻿using System.Net;
 
 namespace CompetitionWebApi.Application.Exceptions;
 
-public class VideoNotFoundException : Exception, IServiceException
+public class VideoNotFoundException : ServiceException
 {
-    public HttpStatusCode Status => HttpStatusCode.NotFound;
-
-    public string ErrorMessage { get; init; }
-
-    public VideoNotFoundException() { }
+    public VideoNotFoundException()
+    {
+        Status = HttpStatusCode.NotFound;
+    }
 }
