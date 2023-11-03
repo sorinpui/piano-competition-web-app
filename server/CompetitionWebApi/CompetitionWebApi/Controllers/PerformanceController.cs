@@ -52,7 +52,7 @@ public class PerformanceController : ControllerBase
     }
 
     [HttpGet("videos/{performanceId}")]
-    [Authorize]
+    [Authorize(Roles = "Spectator")]
     public async Task<IActionResult> DownloadPerformanceVideo([FromRoute] int performanceId)
     {
         PerformanceVideoDto result = await _performanceService.GetPerformanceVideoAsync(performanceId);
@@ -61,7 +61,7 @@ public class PerformanceController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    [Authorize(Roles = "Spectator")]
     public async Task<IActionResult> GetAllPerformances()
     {
         var performances = await _performanceService.GetAllPerformancesAsync();

@@ -9,14 +9,18 @@ namespace CompetitionWebApi.Application.Services;
 public class ScoreService : IScoreService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IJwtService _jwtService;
 
-    public ScoreService(IUnitOfWork unitOfWork)
+    public ScoreService(IUnitOfWork unitOfWork, IJwtService jwtService)
     {
         _unitOfWork = unitOfWork;
+        _jwtService = jwtService;
     }
 
     public async Task CreateScoreAsync(ScoreRequest request)
     {
+        int userId = _jwtService.GetSubjectClaim();
+
         Performance? performanceFromDb = await _unitOfWork.PerformanceRepository.GetPerformanceByIdAsync(request.PerformanceId);
 
         if (performanceFromDb == null)

@@ -13,9 +13,19 @@ public class UserRepository : IUserRepository
         _context = context;
     }
 
-    public async Task CreateUserAsync(User entity)
+    public async Task CreateUserAsync(User entity, List<int> roles)
     {
-        await _context.AddAsync(entity);
+        await _context.Users.AddAsync(entity);
+        await _context.SaveChangesAsync();
+
+        foreach (int role in roles)
+        {
+            await _context.UserRoles.AddAsync(new UserRole
+            {
+                UserId = entity.Id,
+                RoleId = role
+            });
+        }
     }
 
     public async Task<User?> GetUserByEmailAsync(string email)
@@ -25,15 +35,25 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public async Task<User?> GetUserByIdAsync(int id)
+    public async Task<User?> GetUserByIdAsync(int userId)
     {
-        User? user = await _context.Users.FindAsync(id);
-
+        User? user = await _context.Users.FindAsync(userId);
+        
         return user;
     }
-
+     
     public async Task<List<User>> GetAllUsersAsync()
     {
         return await _context.Users.ToListAsync();
+    }
+
+    public async Task<List<int>> GetUserRolesById(int userId)
+    {
+        List<int> roles = await _context.UserRoles
+            .Where(x => x.UserId == userId)
+            .Select(y => y.RoleId)
+            .ToListAsync();
+
+        return roles;
     }
 }

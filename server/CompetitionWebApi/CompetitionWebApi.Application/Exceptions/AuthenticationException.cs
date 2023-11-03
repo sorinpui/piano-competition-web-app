@@ -6,6 +6,6 @@ public class AuthenticationException : ServiceException
 {
     public AuthenticationException(HttpStatusCode statusCode)
     {
-        Status = statusCode;
+        StatusCode = statusCode;
     }
 }

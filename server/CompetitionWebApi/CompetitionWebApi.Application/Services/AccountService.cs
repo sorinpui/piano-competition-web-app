@@ -35,7 +35,9 @@ public class AccountService : IAccountService
 
         User newUser = Mapper.RegisterUserRequestToUserEntity(request, passwordHash);
 
-        await _unitOfWork.UserRepository.CreateUserAsync(newUser);
+        List<int> roles = request.Roles.Select(role => (int)role).ToList();
+
+        await _unitOfWork.UserRepository.CreateUserAsync(newUser, roles);
         await _unitOfWork.SaveAsync();
 
         return new CreatedResult(string.Empty, new SuccessResponse<string>
@@ -64,7 +66,9 @@ public class AccountService : IAccountService
             });
         }
 
-        string token = _jwtService.CreateToken(userFromDb.RoleId, userFromDb.Id);
+        var roles = await _unitOfWork.UserRepository.GetUserRolesById(userFromDb.Id);
+
+        string token = _jwtService.CreateToken(roles, userFromDb.Id);
 
         return new OkObjectResult(new SuccessResponse<string>
         {

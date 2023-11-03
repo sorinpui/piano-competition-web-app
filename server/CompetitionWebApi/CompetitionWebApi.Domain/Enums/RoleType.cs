@@ -1,8 +1,9 @@
 ﻿namespace CompetitionWebApi.Domain.Enums;
 
-public enum Role
+public enum RoleType
 {
     Spectator = 1,
     Contestant,
-    Judge
+    Judge,
+    Admin
 }

@@ -22,15 +22,17 @@ public class JwtService : IJwtService
         _httpContextAccessor = httpContextAccessor;
     }
 
-    public string CreateToken(int roleId, int userId)
+    public string CreateToken(IEnumerable<int> roles, int userId)
     {
-        Role userRole = (Role)roleId;
-
-        Claim[] claims = new[]
+        var claims = new List<Claim>()
         {
-            new Claim(ClaimTypes.Role, userRole.ToString()),
             new Claim(ClaimTypes.NameIdentifier, userId.ToString())
         };
+        
+        foreach (RoleType role in roles.Select(r => (RoleType)r))
+        {
+            claims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+        }
 
         string secretKey = _configuration["JwtSettings:SecretKey"];
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -83,11 +85,10 @@ public class JwtService : IJwtService
     private IEnumerable<Claim>? GetClaimsFromJwt()
     {
         string authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-        string token;
 
         if (!string.IsNullOrEmpty(authorizationHeader) && authorizationHeader.StartsWith("Bearer "))
         {
-            token = authorizationHeader.Split(' ')[1].Trim();
+            string token = authorizationHeader.Split(' ')[1].Trim();
 
             var handler = new JwtSecurityTokenHandler();
             var jwtSecurityToken = handler.ReadJwtToken(token);

@@ -6,6 +6,6 @@ public class InvalidRequestException : ServiceException
 {
     public InvalidRequestException()
     {
-        Status = HttpStatusCode.BadRequest;
+        StatusCode = HttpStatusCode.BadRequest;
     }
 }

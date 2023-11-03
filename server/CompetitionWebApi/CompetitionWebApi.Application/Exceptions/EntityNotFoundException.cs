@@ -6,6 +6,6 @@ public class EntityNotFoundException : ServiceException
 {
     public EntityNotFoundException() 
     {
-        Status = HttpStatusCode.NotFound;
+        StatusCode = HttpStatusCode.NotFound;
     }
 }

@@ -6,6 +6,6 @@ public class VideoNotFoundException : ServiceException
 {
     public VideoNotFoundException()
     {
-        Status = HttpStatusCode.NotFound;
+        StatusCode = HttpStatusCode.NotFound;
     }
 }

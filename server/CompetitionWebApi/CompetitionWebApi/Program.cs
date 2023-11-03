@@ -12,6 +12,7 @@ using System.Text;
 using CompetitionWebApi.Application.Factories;
 using CompetitionWebApi.DataAccess.Repositories;
 using System.Text.Json;
+using CompetitionWebApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,11 +36,11 @@ builder.Services.AddScoped<IScoreRepository, ScoreRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Request validators
-builder.Services.AddTransient<IValidator<RegisterRequest>, ReigsterRequestValidator>();
+builder.Services.AddTransient<IValidator<RegisterRequest>, RegisterRequestValidator>();
 builder.Services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddTransient<IValidator<PerformanceRequest>, PerformanceRequestValidator>();
 builder.Services.AddTransient<IValidator<ScoreRequest>, ScoreValidator>();
-
+builder.Services.AddTransient<IValidator<CreateJudgeRequest>, CreateJudgeRequestValidator>();
 builder.Services.AddSingleton<IValidatorsFactory, ValidatorsFactory>();
 
 // Validation services
@@ -54,14 +55,7 @@ builder.Services.AddScoped<IScoreService, ScoreService>();
 // Authentication services
 builder.Services.AddScoped<IJwtService, JwtService>();
 
-//string? secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
 string? secretKey = builder.Configuration["JwtSettings:SecretKey"];
-
-//if (secretKey is null)
-//{
-//    secretKey = Encoding.UTF8.GetString(RandomNumberGenerator.GetBytes(32));
-//    Environment.SetEnvironmentVariable("JWT_SECRET_KEY", secretKey);
-//}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -89,7 +83,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseExceptionHandler("/error");
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthentication();
 

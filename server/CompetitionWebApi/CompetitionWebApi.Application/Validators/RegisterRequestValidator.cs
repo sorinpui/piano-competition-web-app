@@ -1,43 +1,56 @@
 ﻿using CompetitionWebApi.Application.Requests;
+using CompetitionWebApi.Domain.Enums;
 using FluentValidation;
 using System.Text.RegularExpressions;
 
 namespace CompetitionWebApi.Application.Validators;
 
-public class ReigsterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
     private const string _passwordError = "The password must be at least 8 characters long containing lowercase and uppercase letters, at least one symbol and at least one digit.";
     private const string _empty = "This field cannot be empty.";
 
-    public ReigsterRequestValidator()
+    public RegisterRequestValidator()
     {
         RuleLevelCascadeMode = CascadeMode.Stop;
 
-        RuleFor(request => request.FirstName)
+        RuleFor(x => x.FirstName)
             .NotEmpty().WithMessage(_empty);
-        RuleFor(request => request.LastName)
+        RuleFor(x => x.LastName)
             .NotEmpty().WithMessage(_empty);
 
-        RuleFor(request => request.Email)
+        RuleFor(x => x.Email)
             .NotEmpty().WithMessage(_empty)
             .EmailAddress().WithMessage("Invalid email address.");
 
-        RuleFor(request => request.Password)
+        RuleFor(x => x.Password)
             .NotEmpty().WithMessage(_empty)
             .Must(BeStrong).WithMessage(_passwordError);
 
-        RuleFor(request => request.RoleId)
+        RuleFor(x => x.Roles)
             .NotEmpty().WithMessage(_empty)
-            .IsInEnum().WithMessage("The value provided is not valid.")
-            .NotEqual(Domain.Enums.Role.Judge).WithMessage("The value provided is not valid.");
+            .Must(HaveValidRoles).WithMessage("The roles provided are not valid.");
     }
 
-    private bool BeStrong(string password)
+    private static bool BeStrong(string password)
     {
         if (password == null) return false;
 
         Regex regex = new Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()\-_=+{};:,<.>]).{8,}$");
 
         return regex.IsMatch(password);
+    }
+
+    private static bool HaveValidRoles(List<RoleType> roles)
+    {
+        foreach (RoleType role in roles)
+        {
+            if (!Enum.IsDefined(typeof(RoleType), role) || role == RoleType.Judge)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

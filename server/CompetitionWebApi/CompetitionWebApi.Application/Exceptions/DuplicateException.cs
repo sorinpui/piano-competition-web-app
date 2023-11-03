@@ -6,6 +6,6 @@ public class DuplicateException : ServiceException
 {
     public DuplicateException() 
     {
-        Status = HttpStatusCode.Conflict;
+        StatusCode = HttpStatusCode.Conflict;
     }
 }

@@ -6,6 +6,6 @@ public class ForbiddenException : ServiceException
 {
     public ForbiddenException()
     {
-        Status = HttpStatusCode.Forbidden;
+        StatusCode = HttpStatusCode.Forbidden;
     }
 }

@@ -11,4 +11,6 @@ public class Role : EntityBase
 
     [Required]
     public string Name { get; set; }
+
+    public List<User> Users { get; set; } = new();
 }

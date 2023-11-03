@@ -14,7 +14,6 @@ public static class Mapper
             LastName = request.LastName,
             Email = request.Email,
             Password = passwordHash,
-            RoleId = (int)request.RoleId
         };
     }
 

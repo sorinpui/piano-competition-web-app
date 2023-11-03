@@ -1,5 +1,7 @@
 ﻿using CompetitionWebApi.Application.Interfaces;
 using CompetitionWebApi.Application.Requests;
+using CompetitionWebApi.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompetitionWebApi.Controllers;
@@ -33,6 +35,19 @@ public class AccountController : ControllerBase
         await _validationService.ValidateRequestAsync(request);
         
         IActionResult result = await _accountService.LoginUserAsync(request);
+
+        return result;
+    }
+
+    [HttpPost("admin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateJudge([FromBody] CreateJudgeRequest request)
+    {
+        await _validationService.ValidateRequestAsync(request);
+
+        request.Roles = new List<RoleType>() { RoleType.Spectator, RoleType.Judge };
+
+        IActionResult result = await _accountService.RegisterUserAsync(request);
 
         return result;
     }
